@@ -1,15 +1,19 @@
 from django.db import models
-from django.contrib.auth.models import User
-
-class Status(models.Model):
-    name = models.CharField(max_length=50)
-
-class Label(models.Model):
-    name = models.CharField(max_length=50)
 
 class Task(models.Model):
-    title = models.CharField(max_length=100)
-    description = models.TextField()
-    status = models.ForeignKey(Status, on_delete=models.CASCADE)
-    labels = models.ManyToManyField(Label)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)  
+    description = models.TextField()  
+    status = models.CharField(max_length=20, choices=[
+        ('TODO', 'To Do'),
+        ('IN_PROGRESS', 'In Progress'),
+        ('DONE', 'Done'),
+    ], default='TODO')  
+    due_date = models.DateField(null=True, blank=True)  
+    created_at = models.DateTimeField(auto_now_add=True)  
+
+    def __str__(self):
+        return self.title  
+
+    class Meta:
+        ordering = ['-created_at']  
+
