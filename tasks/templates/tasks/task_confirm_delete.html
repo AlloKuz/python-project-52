@@ -1,6 +1,12 @@
-<h2>Удалить задачу "{{ task.title }}"?</h2>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Удалить</button>
-</form>
-<a href="{% url 'task_list' %}">Отмена</a>
+{% extends "tasks/base.html" %}
+
+{% block title %}Удаление задачи{% endblock %}
+
+{% block content %}
+    <h2>Удалить задачу "{{ task.title }}"?</h2>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Удалить</button>
+    </form>
+    <a href="{% url 'task_list' %}">Отмена</a>
+{% endblock %}

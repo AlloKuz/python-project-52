@@ -1,5 +1,15 @@
-<h1>{{ task.title }}</h1>
-<p>{{ task.description }}</p>
-<a href="{% url 'task_edit' task.id %}">Редактировать</a> |
-<a href="{% url 'task_delete' task.id %}">Удалить</a>
-<a href="{% url 'task_list' %}">Назад</a>
+{% extends "tasks/base.html" %}
+
+{% block title %}{{ task.title }}{% endblock %}
+
+{% block content %}
+    <h2>{{ task.title }}</h2>
+    <p>{{ task.description }}</p>
+    <p>Статус: {{ task.status }}</p>
+    <p>Метки: {% for label in task.labels.all %}{{ label.name }} {% endfor %}</p>
+
+    <a href="{% url 'task_edit' task.id %}">Редактировать</a> |
+    <a href="{% url 'task_delete' task.id %}">Удалить</a>
+    <br><br>
+    <a href="{% url 'task_list' %}">Назад</a>
+{% endblock %}

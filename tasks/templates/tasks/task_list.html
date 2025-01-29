@@ -1,8 +1,18 @@
-{% for task in tasks %}
-    <h2><a href="{% url 'task_detail' task.id %}">{{ task.title }}</a></h2>
-    <p>{{ task.description }}</p>
-    <a href="{% url 'task_edit' task.id %}">Редактировать</a> |
-    <a href="{% url 'task_delete' task.id %}">Удалить</a>
-{% endfor %}
-<a href="{% url 'task_create' %}">Создать новую задачу</a>
+{% extends "tasks/base.html" %}
 
+{% block title %}Список задач{% endblock %}
+
+{% block content %}
+    <h2>Список задач</h2>
+    {% for task in tasks %}
+        <div>
+            <h3><a href="{% url 'task_detail' task.id %}">{{ task.title }}</a></h3>
+            <p>{{ task.description }}</p>
+            <a href="{% url 'task_edit' task.id %}">Редактировать</a> |
+            <a href="{% url 'task_delete' task.id %}">Удалить</a>
+        </div>
+    {% empty %}
+        <p>Задач пока нет.</p>
+    {% endfor %}
+    <a href="{% url 'task_create' %}">Создать новую задачу</a>
+{% endblock %}
