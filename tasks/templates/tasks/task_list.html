@@ -1,0 +1,8 @@
+{% for task in tasks %}
+    <h2><a href="{% url 'task_detail' task.id %}">{{ task.title }}</a></h2>
+    <p>{{ task.description }}</p>
+    <a href="{% url 'task_edit' task.id %}">Редактировать</a> |
+    <a href="{% url 'task_delete' task.id %}">Удалить</a>
+{% endfor %}
+<a href="{% url 'task_create' %}">Создать новую задачу</a>
+
