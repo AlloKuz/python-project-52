@@ -1,0 +1,23 @@
+{% extends "layout/base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+
+<form class="form col-4" method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+    <div class="form-outline">
+        <label for="loginEmail" class="form-label">{% translate "Username" %}:</label>
+        <input type="text" class="form-control" name="loginUsername">
+    </div>
+    <div class="form-outline">
+        <label for="loginPassword" class="form-label">{% translate "Password" %}:</label>
+        <input type="password" class="form-control" name="loginPassword">
+    </div>
+    <div class="form-outline py-2">
+        <input type="submit" class="btn btn-primary" value="{% translate 'Submit' %}">
+        <input type="hidden" name="next" value="{{ next }}">
+    </div>
+</form>
+
+{% endblock %}

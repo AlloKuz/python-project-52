@@ -17,13 +17,13 @@
                     <a href="/" class="navbar-brand">{% translate "Менеджер задач" %}</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">{% translate "Пользователи" %}</a>
+                    <a href="{% url 'users' %}" class="nav-link">{% translate "Пользователи" %}</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">{% translate "Вход" %}</a>
+                    <a href="{% url 'login' %}" class="nav-link">{% translate "Вход" %}</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">{% translate "Регистрация" %}</a>
+                    <a href="{% url 'signup' %}" class="nav-link">{% translate "Регистрация" %}</a>
                 </li>
             </ul>
         </nav>
