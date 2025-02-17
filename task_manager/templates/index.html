@@ -1,13 +1,15 @@
 {% extends "base.html" %}
 
+{% load i18n %}
+
 {% block content %}
 
-<h1>Привет от Хекслета!</h1>
+<h1>{% translate "Привет от Хекслета!" %}</h1>
 
-<p class="lead">Практические курсы по программированию</p>
+<p class="lead">{% translate "Практические курсы по программированию" %}</p>
 
 <hr>
 
-<button class="btn btn-primary">Узнать больше</button>
+<button class="btn btn-primary">{% translate "Узнать больше" %}</button>
 
 {% endblock %}
