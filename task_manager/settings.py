@@ -12,7 +12,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 import logging
 import os
+
 from dotenv import load_dotenv
+import dj_database_url
 from django.utils.translation import gettext_lazy as _
 
 from pathlib import Path
@@ -25,10 +27,11 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
+DATABASE_URL = os.getenv("DATABASE_URL")
 assert SECRET_KEY, "You should set your secret key! Use dotenv or set manually."
 
-# Set DEBUG for all except Render (production version)
-DEBUG = 'RENDER' not in os.environ
+# Set DEBUG if DJ_DEBUG at environment vars is true
+DEBUG = os.getenv('DJ_DEBUG') == 'true'
 if DEBUG:
     logger.info("You started in debug mode")
 
@@ -88,16 +91,24 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'task_manager.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
 
 
 # Password validation
@@ -136,7 +147,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
