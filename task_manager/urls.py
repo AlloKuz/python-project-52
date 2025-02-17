@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from task_manager.views import LoginView
+from task_manager.views import LoginView, LogoutView
 
 from task_manager import views
 
@@ -25,5 +25,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', views.IndexView.as_view(), name="users"),
     path('login/', LoginView.as_view(), name="login"),
+    path('logout/', LogoutView.as_view(), name="logout"),
     path('signup/', views.IndexView.as_view(), name="signup"),
 ]

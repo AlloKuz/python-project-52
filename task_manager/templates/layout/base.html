@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Task manager{% endblock %}</title>
     {% bootstrap_css %}
+    {% bootstrap_javascript %}
 </head>
 <body>
     <div class="container-fluid bg-dark">
@@ -19,19 +20,31 @@
                 <li class="nav-item">
                     <a href="{% url 'users' %}" class="nav-link">{% translate "Пользователи" %}</a>
                 </li>
+                {% if request.user.is_authenticated %}
+
+                <li class="nav-item">
+                    <form action="{% url 'logout' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="submit" class="nav-link" value="{% translate 'Выход' %}">
+                    </form>
+                </li>
+
+                {% else %}
                 <li class="nav-item">
                     <a href="{% url 'login' %}" class="nav-link">{% translate "Вход" %}</a>
                 </li>
                 <li class="nav-item">
                     <a href="{% url 'signup' %}" class="nav-link">{% translate "Регистрация" %}</a>
                 </li>
+                {% endif %}
             </ul>
         </nav>
     </div>
-    {% bootstrap_messages %}
+    <div class="container">
+        {% bootstrap_messages %}
+    </div>
     <div class="container bg-light p-5 my-5 border border-secondary rounded">
         {% block content %}
         {% endblock %}
     </div>
 </body>
-</html>
