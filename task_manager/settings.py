@@ -29,7 +29,7 @@ load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY')
 assert SECRET_KEY, "You should set your secret key! Use dotenv or set manually."
 
-USE_PSQL = os.getenv("USE_PSQL") == 'true'
+USE_LOCAL_DB = os.getenv("USE_LOCAL_DB") == 'true'
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 # Set DEBUG if DJ_DEBUG at environment vars is true
@@ -96,20 +96,24 @@ WSGI_APPLICATION = 'task_manager.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-if USE_PSQL:
+
+if USE_LOCAL_DB:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'mydb.sqlite3',
+            'TEST': {
+                'NAME': BASE_DIR / 'mytestdatabase',
+            },
+        }
+    }
+else:
     DATABASES = {
         'default': dj_database_url.parse(
             DATABASE_URL,
             conn_max_age=600,
             conn_health_checks=True,
         )
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
     }
 
 
