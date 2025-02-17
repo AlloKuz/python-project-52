@@ -27,8 +27,10 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
-DATABASE_URL = os.getenv("DATABASE_URL")
 assert SECRET_KEY, "You should set your secret key! Use dotenv or set manually."
+
+USE_PSQL = os.getenv("USE_PSQL") == 'true'
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # Set DEBUG if DJ_DEBUG at environment vars is true
 DEBUG = os.getenv('DJ_DEBUG') == 'true'
@@ -94,20 +96,20 @@ WSGI_APPLICATION = 'task_manager.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-if DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-else:
+if USE_PSQL:
     DATABASES = {
         'default': dj_database_url.parse(
             DATABASE_URL,
             conn_max_age=600,
             conn_health_checks=True,
         )
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
 
 
