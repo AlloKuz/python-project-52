@@ -1,0 +1,17 @@
+{% extends "layout/base.html" %}
+
+{% load i18n %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+
+<h1>{% translate "Создать статус" %}</h1>
+<form class="form col-5 py-2" action="{% url 'statuses_create' %}" method="post">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+
+    {% translate "Сохранить" as button_send %}
+    {% bootstrap_button button_send %}
+</form>
+
+{% endblock %}
