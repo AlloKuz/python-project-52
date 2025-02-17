@@ -8,3 +8,10 @@ coverage.xml
 .pytest_cache/
 .DS_Store
 *.log
+.idea/
+static/
+
+*.sw[poa]
+.env
+coverage.*
+*.sqlite3
