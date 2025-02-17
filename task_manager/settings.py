@@ -10,22 +10,26 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import logging
 import os
+from dotenv import load_dotenv
 
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+logger = logging.getLogger(__name__)
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+# env variables
+load_dotenv()
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY", default="s9c9=@e7*%id3qq#d_jc8kdm$4q%+(g+#g^in0a_yzflwqumx9")
+SECRET_KEY = os.getenv("SECRET_KEY")
+assert SECRET_KEY, "You should set your secret key! Use dotenv or set manually."
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# Set DEBUG for all except Render (production version)
 DEBUG = 'RENDER' not in os.environ
+if DEBUG:
+    logger.info("You started in debug mode")
 
 ALLOWED_HOSTS = [
     'webserver',
@@ -76,7 +80,6 @@ TEMPLATES = [
         },
     },
 ]
-
 
 WSGI_APPLICATION = 'task_manager.wsgi.application'
 
@@ -132,7 +135,3 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-LOGIN_REDIRECT_URL = "task_list"  
-LOGOUT_REDIRECT_URL = "task_list"  
-
