@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 # env variables
 load_dotenv()
 
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = os.getenv('SECRET_KEY')
 assert SECRET_KEY, "You should set your secret key! Use dotenv or set manually."
 
 USE_PSQL = os.getenv("USE_PSQL") == 'true'
