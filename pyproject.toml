@@ -11,6 +11,7 @@ django = "^5.0.7"
 gunicorn = "^23.0.0"
 python-dotenv = "^1.0.1"
 django-bootstrap5 = "^24.2"
+uvicorn = "^0.30.5"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^7.1.0"
