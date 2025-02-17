@@ -1,0 +1,18 @@
+{% extends "layout/base.html" %}
+
+{% load i18n %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+
+<h1>{% translate "Пользователи" %}</h1>
+
+<form action="{% url 'users_create' %}" method="post">
+    {% bootstrap_form form %}
+    {% csrf_token %}
+
+    {% translate "Отправить" as button_send %}
+    {% bootstrap_button button_send button_type="submit" button_class="btn-primary" %}
+</form>
+
+{% endblock %}

@@ -5,6 +5,8 @@ from django.contrib import messages
 from django.utils.translation import gettext as _
 from django.contrib.auth.models import User
 
+from task_manager.forms import UserForm
+
 
 class IndexView(views.View):
     def get(self, request, *args, **kwargs):
@@ -40,3 +42,18 @@ class UsersView(views.View):
     def get(self, request, *args, **kwargs):
         users = User.objects.all()
         return render(request, "users.html", context={"users": users})
+
+
+class UserFormView(views.View):
+    def get(self, request, *args, **kwargs):
+        form = UserForm()
+        return render(request, "registration/signup.html", {"form": form})
+
+    def post(self, request, *args, **kwargs):
+        form = UserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.info(request, "Sign up success")
+            return redirect(reverse('index'))
+        messages.error(request, "Something is wrong")
+        return render(request, "registration/signup.html", {"form": form})

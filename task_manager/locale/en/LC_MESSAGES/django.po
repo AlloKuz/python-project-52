@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-17 13:54+0300\n"
+"POT-Creation-Date: 2025-02-17 14:57+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,21 +17,14 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-#: templates/base.html:17
-msgid "Менеджер задач"
-msgstr "Task manager"
 
-#: templates/base.html:20
-msgid "Пользователи"
-msgstr "Users"
+#: settings.py:130
+msgid "Russian"
+msgstr ""
 
-#: templates/base.html:23
-msgid "Вход"
-msgstr "Log in"
-
-#: templates/base.html:26
-msgid "Регистрация"
-msgstr "Sign up"
+#: settings.py:131
+msgid "English"
+msgstr ""
 
 #: templates/index.html:7
 msgid "Привет от Хекслета!"
@@ -44,3 +37,56 @@ msgstr "Practical programming courses"
 #: templates/index.html:13
 msgid "Узнать больше"
 msgstr "Learn more"
+
+#: templates/layout/base.html:18
+msgid "Менеджер задач"
+msgstr "Task manager"
+
+#: templates/layout/base.html:21 templates/registration/signup.html:8
+msgid "Пользователи"
+msgstr "Users"
+
+#: templates/layout/base.html:29
+msgid "Выход"
+msgstr "Log out"
+
+#: templates/layout/base.html:35
+msgid "Вход"
+msgstr "Log in"
+
+#: templates/layout/base.html:38
+msgid "Регистрация"
+msgstr "Sign up"
+
+#: templates/registration/login.html:12
+#, fuzzy
+#| msgid "Пользователи"
+msgid "Имя пользователя"
+msgstr "Users"
+
+#: templates/registration/login.html:17
+msgid "Пароль"
+msgstr ""
+
+#: templates/registration/login.html:22
+msgid "Войти"
+msgstr ""
+
+#: templates/registration/signup.html:14
+msgid "Отправить"
+msgstr ""
+
+#: views.py:26
+msgid "Вы залогинены"
+msgstr "Logged in"
+
+#: views.py:29
+msgid ""
+"Пожалуйста, введите правильные имя пользователя и пароль. Оба поля могут "
+"быть чувствительны к регистру."
+msgstr ""
+"Please enter correct username and password! Both fields are case sensitive"
+
+#: views.py:37
+msgid "Вы разлогинены"
+msgstr "Logged out"

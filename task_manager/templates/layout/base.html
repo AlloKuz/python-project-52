@@ -20,6 +20,7 @@
                 <li class="nav-item">
                     <a href="{% url 'users' %}" class="nav-link">{% translate "Пользователи" %}</a>
                 </li>
+
                 {% if request.user.is_authenticated %}
 
                 <li class="nav-item">
@@ -34,7 +35,7 @@
                     <a href="{% url 'login' %}" class="nav-link">{% translate "Вход" %}</a>
                 </li>
                 <li class="nav-item">
-                    <a href="{% url 'signup' %}" class="nav-link">{% translate "Регистрация" %}</a>
+                    <a href="{% url 'users_create' %}" class="nav-link">{% translate "Регистрация" %}</a>
                 </li>
                 {% endif %}
             </ul>
