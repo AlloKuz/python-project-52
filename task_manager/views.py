@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.utils.translation import gettext as _
 from django.contrib.auth.models import User
 
-from task_manager.forms import UserForm
+from task_manager.forms import UserCreateForm, UserUpdateForm
 
 
 class IndexView(views.View):
@@ -46,14 +46,30 @@ class UsersView(views.View):
 
 class UserFormView(views.View):
     def get(self, request, *args, **kwargs):
-        form = UserForm()
+        form = UserCreateForm()
         return render(request, "registration/signup.html", {"form": form})
 
     def post(self, request, *args, **kwargs):
-        form = UserForm(request.POST)
+        form = UserCreateForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.info(request, "Sign up success")
-            return redirect(reverse('index'))
-        messages.error(request, "Something is wrong")
+            messages.info(request, _("Пользователь успешно зарегистрирован"))
+            return redirect(reverse('login'))
         return render(request, "registration/signup.html", {"form": form})
+
+
+class UserUpdateView(views.View):
+    def get(self, request, id, *args, **kwargs):
+        user = User.objects.get(id=id)
+        form = UserUpdateForm(instance=user)
+        if user:
+            return render(request, "registration/update.html", {"form": form, "user_id": id})
+    
+    def post(self, request, id, *args, **kwargs):
+        user = User.objects.get(id=id)
+        form = UserUpdateForm(data=request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.info(request, _("Пользователь успешно изменен"))
+            return redirect(reverse('index'))
+        return render(request, "registration/update.html", {"form": form, "user_id": id})
