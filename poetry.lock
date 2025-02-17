@@ -158,6 +158,30 @@ Django = ">=4.2"
 jinja = ["Jinja2 (>=3.0,<4)"]
 
 [[package]]
+name = "django-extensions"
+version = "3.2.3"
+description = "Extensions for Django"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "django-extensions-3.2.3.tar.gz", hash = "sha256:44d27919d04e23b3f40231c4ab7af4e61ce832ef46d610cc650d53e68328410a"},
+    {file = "django_extensions-3.2.3-py3-none-any.whl", hash = "sha256:9600b7562f79a92cbf1fde6403c04fee314608fefbb595502e34383ae8203401"},
+]
+
+[package.dependencies]
+Django = ">=3.2"
+
+[[package]]
+name = "django-shell-plus"
+version = "1.1.7"
+description = "django-admin.py shell+  <- shell with models auto-imported"
+optional = false
+python-versions = "*"
+files = [
+    {file = "django-shell-plus-1.1.7.tar.gz", hash = "sha256:fcad4b3b97ee66d3fb61dc020711d53acf71db637b3e40970e9c7b23949e2b50"},
+]
+
+[[package]]
 name = "exceptiongroup"
 version = "1.2.2"
 description = "Backport of PEP 654 (exception groups)"
@@ -461,4 +485,4 @@ standard = ["colorama (>=0.4)", "httptools (>=0.5.0)", "python-dotenv (>=0.13)",
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "d1783681d42385a2959471fc8cb2baf7ffcdbe1fe4cf1cf57352cda0de1ce112"
+content-hash = "273b48f59dfafc3b7fe4b8906584c2c771d1ed73c7d57c48da385b32a713b86a"
