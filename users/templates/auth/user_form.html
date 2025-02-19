@@ -5,12 +5,12 @@
 
 {% block content %}
 
-<h1>{% translate "Users" %}</h1>
+<h1>{% translate "Sign up" %}</h1>
 
 <form action="{% url 'users_create' %}" method="post">
     {% bootstrap_form form %}
     {% csrf_token %}
 
-    {% translate "Sign up" as button_send %}
+    {% translate "Sign me up" as button_send %}
     {% bootstrap_button button_send button_type="submit" button_class="btn-primary" %}
 </form>

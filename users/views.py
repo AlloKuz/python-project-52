@@ -2,12 +2,11 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import reverse, redirect
 from django.contrib import messages
 from django.urls import reverse_lazy
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models.deletion import ProtectedError
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from django.contrib.auth.forms import SetPasswordForm
 
 from users.forms import UserCreateForm
 
@@ -23,7 +22,7 @@ class UserCreateView(SuccessMessageMixin, CreateView):
     success_url = reverse_lazy("login")
 
 
-class UserUpdateView(LoginRequiredMixin, UpdateView, SetPasswordForm):
+class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = User
     # form_class = UserUpdateForm
     fields = ["first_name", "last_name", "username"]
