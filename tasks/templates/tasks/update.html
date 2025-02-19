@@ -5,8 +5,8 @@
 
 {% block content %}
 
-<h1>{% translate "Изменение статуса" %}</h1>
-<form class="form col-5 py-2" action="{% url 'statuses_update' id=status_id %}" method="post">
+<h1>{% translate "Редактировать задачу" %}</h1>
+<form class="form col-5 py-2" action="{% url 'tasks_update' id=task.id %}" method="post">
     {% csrf_token %}
     {% bootstrap_form form %}
 

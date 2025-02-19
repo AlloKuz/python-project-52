@@ -6,6 +6,7 @@ from django.utils.translation import gettext as _
 
 class UserCreateForm(UserCreationForm):
     usable_password = None
+
     class Meta:
         model = User
         fields = ("first_name", "last_name", "username")

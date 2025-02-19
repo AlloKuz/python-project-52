@@ -1,0 +1,50 @@
+{% extends "layout/base.html" %}
+
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<h1>{% translate "Задачи" %}</h1>
+<a class="btn btn-primary my-2" href="{% url 'tasks_create' %}">
+    {% translate "Создать задачу" %}
+</a>
+
+    <form method="get" class="form-inline center">
+        {% csrf_token %}
+        {{ filters.form|crispy }}
+        <input class="btn btn-primary" type="submit" value="{% translate 'Показать' %}"/>
+    </form>
+
+<table class="table table-striped mt-4">
+    <thead>
+        <th>ID</th>
+        <th>{% translate "Имя" %}</th>
+        <th>{% translate "Статус" %}</th>
+        <th>{% translate "Автор" %}</th>
+        <th>{% translate "Исполнитель" %}</th>
+        <th>{% translate "Дата создания" %}</th>
+        <th></th>
+    </thead>
+    <tbody>
+        {% for task in filters.qs %}
+        <tr>
+            <td>{{ task.id }}</td>
+            <td>
+                <a href="{% url 'tasks_show' id=task.id %}">{{ task.name }}</a>
+            </td>
+            <td>{{ task.status }}</td>
+            <td>{{ task.author|default:"" }}</td>
+            <td>{{ task.assigned_to|default:"" }}</td>
+            <td>{{ task.created_at|date:"d M Y H:i" }}</td>
+            <td >
+                <a href="{% url 'tasks_update' id=task.id %}">{% translate "Изменить" %}</a>
+                <br>
+                <a href="{% url 'tasks_delete' id=task.id %}">{% translate "Удалить" %}</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+

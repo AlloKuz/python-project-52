@@ -11,8 +11,6 @@
     {% bootstrap_form form %}
     {% csrf_token %}
 
-    {% translate "Сохранить" as button_save %}
+    {% translate "Изменить" as button_save %}
     {% bootstrap_button button_save button_type="submit" button_class="btn-primary" %}
 </form>
-
-{% endblock %}
