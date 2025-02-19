@@ -13,7 +13,7 @@ class TasksFilter(django_filters.FilterSet):
                                           field_name="author",
                                           label=_("Is author"))
     labels = django_filters.ModelChoiceFilter(queryset=Label.objects,
-                                              label="Label")
+                                              label=_("Label"))
 
     class Meta:
         model = Task
