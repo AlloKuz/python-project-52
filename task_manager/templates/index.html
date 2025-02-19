@@ -1,0 +1,15 @@
+{% extends "layout/base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+
+<h1>{% translate "Hello from Hexlet!" %}</h1>
+
+<p class="lead">{% translate "Practical programming courses" %}</p>
+
+<hr>
+
+<button class="btn btn-primary">{% translate "Learn more" %}</button>
+
+{% endblock %}
