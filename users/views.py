@@ -1,5 +1,5 @@
 from django import views
-from django.shortcuts import render, reverse, redirect
+from django.shortcuts import render, reverse, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils.translation import gettext as _
 from django.contrib.auth.models import User
@@ -29,7 +29,8 @@ class UserFormView(views.View):
             messages.info(request, _("Пользователь успешно зарегистрирован"))
             return redirect(reverse('login'))
         return render(request, "users/signup.html",
-                      {"form": form})
+                      {"form": form},
+                      status=400)
 
 
 class UserUpdateView(LoginRequiredMixin, views.View):
@@ -39,25 +40,25 @@ class UserUpdateView(LoginRequiredMixin, views.View):
             messages.error(request, _("У вас нет прав для изменения "
                                       "другого пользователя."))
             return redirect(reverse('users'))
-        user = User.objects.get(id=id)
+        user = get_object_or_404(User, id=id)
         form = UserUpdateForm(instance=user)
-        if user:
-            return render(request, "users/update.html",
-                          {"form": form, "user_id": id})
+        return render(request, "users/update.html",
+                      {"form": form, "user_id": id})
 
     def post(self, request, id, *args, **kwargs):
         if request.user.id != id:
             messages.error(request, _("У вас нет прав для изменения "
                                       "другого пользователя."))
             return redirect(reverse('users'))
-        user = User.objects.get(id=id)
+        user = get_object_or_404(User, id=id)
         form = UserUpdateForm(data=request.POST, instance=user)
         if form.is_valid():
             form.save()
             messages.info(request, _("Пользователь успешно изменен"))
-            return redirect(reverse('index'))
+            return redirect(reverse('users'))
         return render(request, "users/update.html",
-                      {"form": form, "user_id": id})
+                      {"form": form, "user_id": id},
+                      status=400)
 
     def handle_no_permission(self, *args, **kwargs):
         messages.error(self.request, _("Вы не авторизованы! "
@@ -72,7 +73,7 @@ class UserDeleteView(LoginRequiredMixin, views.View):
             messages.error(request, _("У вас нет прав для изменения "
                                       "другого пользователя."))
             return redirect(reverse('users'))
-        user = User.objects.get(id=id)
+        user = get_object_or_404(User, id=id)
         return render(request, "users/delete.html",
                       {"user": user})
 
@@ -82,7 +83,7 @@ class UserDeleteView(LoginRequiredMixin, views.View):
                                       "другого пользователя."))
             return redirect(reverse('users'))
         try:
-            user = User.objects.get(id=id)
+            user = get_object_or_404(User, id=id)
             user.delete()
             messages.info(request, _("Пользователь успешно удален"))
         except ProtectedError:
