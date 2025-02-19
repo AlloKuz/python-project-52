@@ -1,9 +1,10 @@
 import unittest
 
-from django.contrib.auth.models import User
 from django.test import Client
 from django.urls import reverse
 import logging
+
+from users.models import User
 
 logger = logging.getLogger(__name__)
 

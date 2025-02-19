@@ -1,8 +1,8 @@
 from django.test import TestCase, Client
-from django.contrib.auth.models import User
 from django.urls import reverse
 import logging
 
+from users.models import User
 from statuses.models import Status
 from tasks.models import Task
 

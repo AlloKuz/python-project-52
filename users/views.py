@@ -3,11 +3,11 @@ from django.shortcuts import reverse, redirect
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models.deletion import ProtectedError
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
+from users.models import User
 from users.forms import UserForm
 from users.mixins import UserOnlyEditThemselfPermissionMixin
 

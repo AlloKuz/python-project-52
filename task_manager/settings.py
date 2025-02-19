@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'labels',
 ]
 
+AUTH_USER_MODEL = "users.User"
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
