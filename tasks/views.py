@@ -31,7 +31,7 @@ class TasksCreateView(LoginRequiredMixin, View):
             return redirect(reverse("tasks"))
         messages.info(request, _("Ошибка добавления задачи"))
         return render(request, "tasks/create.html",
-                      {"form": form})
+                      {"form": form}, status=300)
 
 
 class TasksShowView(LoginRequiredMixin, View):
