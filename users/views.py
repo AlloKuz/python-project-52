@@ -8,7 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models.deletion import ProtectedError
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
-from users.forms import UserCreateForm
+from users.forms import UserForm
 
 
 class UserListView(ListView):
@@ -17,15 +17,14 @@ class UserListView(ListView):
 
 class UserCreateView(SuccessMessageMixin, CreateView):
     model = User
-    form_class = UserCreateForm
+    form_class = UserForm
     success_message = _("User created")
     success_url = reverse_lazy("login")
 
 
 class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = User
-    # form_class = UserUpdateForm
-    fields = ["first_name", "last_name", "username"]
+    form_class = UserForm
     success_message = _("User updated")
     success_url = reverse_lazy("users")
     template_name_suffix = "_update"
