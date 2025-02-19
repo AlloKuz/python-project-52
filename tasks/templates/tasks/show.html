@@ -11,6 +11,8 @@
         <h1>{{ task.name }}</h1>
     </div>
     <div class="card-body">
+        <div class="">{{ task.description }}</div>
+        <hr>
         <table class="table">
             <tr>
                 <th>{% translate "Автор" %}</th>
@@ -18,7 +20,7 @@
             </tr>
             <tr>
                 <th>{% translate "Исполнитель" %}</th>
-                <td>{{ task.assigned_to|default:"" }}</td>
+                <td>{{ task.executor|default:"" }}</td>
             </tr>
             <tr>
                 <th>{% translate "Статус" %}</th>
@@ -29,14 +31,12 @@
                 <td>{{ task.created_at }}</td>
             </tr>
         </table>
-        {% if task.labels.exists %}
-            <h5>{% translate "Метки" %}:</h5>
-            <ul>
-                {% for label in task.labels.all %}
-                <li>{{ label.name }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+        <h5>{% translate "Метки" %}:</h5>
+        <ul>
+            {% for label in task.labels.all %}
+            <li>{{ label.name }}</li>
+            {% endfor %}
+        </ul>
         <div class="pt-2">
             <a href="{% url 'tasks_update' id=task.id %}">
                 {% translate "Изменить" %}
