@@ -81,7 +81,7 @@ class LabelTest(TestCase):
         # when task exists
         response = self.client.post(path_to_label, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"Deletion error", response.content)
+        self.assertIn(b"Unable to delete label", response.content)
         self.assertTrue(Label.objects.filter(name="test_label").exists())
 
         # when task removed

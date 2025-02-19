@@ -1,89 +1,91 @@
-import unittest
-
-from django.test import Client
+from django.test import TestCase, Client
 from django.urls import reverse
 import logging
 
-from users.models import User
 from statuses.models import Status
 
 logger = logging.getLogger(__name__)
 
 
-class StatusViewTest(unittest.TestCase):
+class StatusViewTest(TestCase):
+    fixtures = ["sample.json"]
 
     def setUp(self):
-        if not User.objects.filter(username="test_user").exists():
-            User.objects.create_user(username="test_user",
-                                     password="test_password")
-
-        self.client = Client()
+        self.client = Client(headers={"Accept-Language": "en"})
         self.client.login(username="test_user",
                           password="test_password")
-        Status.objects.create(name="test_status")
+        self.status = Status.objects.get(name="test_status")
 
-    def tearDown(self):
-        if User.objects.filter(username="test_user").exists():
-            User.objects.get(username="test_user").delete()
-        if Status.objects.filter(name="test_status").exists():
-            Status.objects.get(name="test_status").delete()
-
-    def test_read_unauthorized(self):
-
+    def test_unauthorized(self):
         self.client.logout()
 
-        response = self.client.get(reverse("statuses"))
+        urls = [
+            reverse("statuses"),
+            reverse("statuses_create"),
+            reverse("statuses_update", kwargs={"pk": self.status.id}),
+            reverse("statuses_delete", kwargs={"pk": self.status.id}),
+        ]
 
-        self.assertEqual(response.status_code, 302)
-        # self.assertIn(b"alert-danger", response.content)
+        for url in urls:
+            response = self.client.get(url, follow=True)
+            self.assertIn(b"First you need to log in", response.content)
+            self.assertEqual(reverse("login"), response.request['PATH_INFO'])
 
-    def test_read_authorized(self):
-
+    def test_StatusesView(self):
         response = self.client.get(reverse("statuses"))
 
         self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Statuses", response.content)
         self.assertIn(b"test_status", response.content)
 
-    def test_create(self):
-
-        self.client.post(reverse("statuses_create"),
-                         data={"name": "new_test_status"})
-
-        response = self.client.get(reverse("statuses"))
-
+    def test_StatusCreateView(self):
+        # POST
+        response = self.client.post(reverse("statuses_create"),
+                                    data={"name": "new_test_status"},
+                                    follow=True)
         self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Status created", response.content)
+        self.assertEqual(reverse("statuses"), response.request['PATH_INFO'])
         self.assertTrue(Status.objects.filter(name="new_test_status").exists())
 
-        Status.objects.filter(name="new_test_status").delete()
-
-    def test_update(self):
-
-        status = Status.objects.get(name="test_status")
-        response = self.client.get(reverse("statuses_update",
-                                           kwargs={"pk": status.id}))
-
+        # GET
+        response = self.client.get(reverse("statuses"), follow=True)
         self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Create status", response.content)
+
+    def test_StatusUpdateView(self):
+        path_to_status_update = reverse("statuses_update",
+                                        kwargs={"pk": self.status.id})
+        # GET
+        response = self.client.get(path_to_status_update, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Edit status", response.content)
         self.assertIn(b"test_status", response.content)
 
-        response = self.client.post(reverse("statuses_update",
-                                            kwargs={"pk": status.id}),
-                                    data={"name": "test_status_updated"})
+        # POST
+        response = self.client.post(path_to_status_update,
+                                    data={"name": "test_updated"},
+                                    follow=True)
 
-        self.assertTrue(Status.objects.filter(name="test_status_updated")
-                        .exists())
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Status updated", response.content)
+        self.assertEqual(reverse("statuses"), response.request['PATH_INFO'])
+        self.assertTrue(Status.objects.filter(name="test_updated").exists())
         self.assertFalse(Status.objects.filter(name="test_status").exists())
-
-        Status.objects.filter(name="test_status_updated").delete()
 
     def test_delete(self):
+        path_to_object = reverse("statuses_delete",
+                                 kwargs={"pk": self.status.id})
+        # if task exists
+        response = self.client.post(path_to_object, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Unable to delete status", response.content)
+        self.assertTrue(Status.objects.filter(name="test_status").exists())
 
-        status = Status.objects.get(name="test_status")
+        # remove tasks
+        self.status.task_set.all().delete()
 
-        self.client.post(reverse("statuses_delete",
-                                 kwargs={"pk": status.id}))
-
+        response = self.client.post(path_to_object, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Status deleted", response.content)
         self.assertFalse(Status.objects.filter(name="test_status").exists())
-
-
-if __name__ == '__main__':
-    unittest.main()

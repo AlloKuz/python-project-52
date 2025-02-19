@@ -74,7 +74,7 @@ class UsersTest(TestCase):
         self.client.login(username="test_user", password="test_password")
         response = self.client.post(url_object, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"Deletion error", response.content)
+        self.assertIn(b"Unable to delete user", response.content)
         self.client.logout()
     
         # create new unbounded user

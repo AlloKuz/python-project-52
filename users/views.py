@@ -7,7 +7,7 @@ from django.db.models.deletion import ProtectedError
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
 from users.models import User
-from users.forms import UserForm
+from users.forms import UserForm, UserUpdateForm
 from users.mixins import (UserOnlyEditThemselfPermissionMixin,
                           LoginRequiredWithMessageMixin)
 
@@ -28,7 +28,7 @@ class UserUpdateView(LoginRequiredMixin,
                      SuccessMessageMixin,
                      UpdateView):
     model = User
-    form_class = UserForm
+    form_class = UserUpdateForm
     success_message = _("User updated")
     success_url = fail_url = reverse_lazy("users")
     template_name_suffix = "_update"
