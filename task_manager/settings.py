@@ -12,9 +12,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 import logging
 import os
+import uuid
 
-from dotenv import load_dotenv
 import dj_database_url
+from dotenv import load_dotenv
 from django.utils.translation import gettext_lazy as _
 
 from pathlib import Path
@@ -26,8 +27,7 @@ logger = logging.getLogger(__name__)
 # env variables
 load_dotenv()
 
-SECRET_KEY = os.getenv('SECRET_KEY')
-assert SECRET_KEY, "You should set your secret key! Use dotenv or set manually."
+SECRET_KEY = os.getenv("SECRET_KEY") or uuid.uuid4()
 
 USE_LOCAL_DB = os.getenv("USE_LOCAL_DB") == 'true'
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'django_bootstrap5',
     'django_extensions',
     'task_manager',
+    'statuses',
 ]
 
 MIDDLEWARE = [
@@ -75,17 +76,17 @@ ROOT_URLCONF = 'task_manager.urls'
 
 TEMPLATES = [
     {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             BASE_DIR / 'templates',
         ],
-        "APP_DIRS": True,  
-        "OPTIONS": {
-            "context_processors": [
-                "django.template.context_processors.debug",
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
             ],
         },
     },
@@ -95,7 +96,6 @@ WSGI_APPLICATION = 'task_manager.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
 
 if USE_LOCAL_DB:
     DATABASES = {
