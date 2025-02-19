@@ -4,26 +4,32 @@ on:
   - push
   - pull_request
 
+env:
+  USE_LOCAL_DB: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
-            python-version: 3.12
+            python-version: 3.11
 
       - name: Install dependencies
         run: |
-          pip install poetry
-          make install install
+          python -m ensurepip
+          python -m pip install --upgrade pip
+          python -m pip install poetry
+          poetry update
+          make build
 
       - name: Run linter
         run: |
           make lint
 
       - name: Run tests
-        run:
+        run: |
           make test
