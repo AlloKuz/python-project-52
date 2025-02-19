@@ -2,12 +2,13 @@ from django.shortcuts import render, reverse, redirect, get_object_or_404
 from django.views import View
 from django.contrib import messages
 from django.utils.translation import gettext as _
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from labels.models import Label
 from labels.forms import LabelForm
 
 
-class IndexView(View):
+class IndexView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         labels = Label.objects.all()
         return render(request,
@@ -15,7 +16,7 @@ class IndexView(View):
                       {"labels": labels})
 
 
-class CreateLabelView(View):
+class CreateLabelView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         form = LabelForm()
         return render(request,
@@ -33,7 +34,7 @@ class CreateLabelView(View):
                       {"form": form})
 
 
-class UpdateLabelView(View):
+class UpdateLabelView(LoginRequiredMixin, View):
     def get(self, request, id, *args, **kwargs):
         label = get_object_or_404(Label, id=id)
         form = LabelForm(instance=label)
@@ -51,7 +52,7 @@ class UpdateLabelView(View):
                       {"form": form, "label": label})
 
 
-class DeleteLabelView(View):
+class DeleteLabelView(LoginRequiredMixin, View):
     def get(self, request, id, *args, **kwargs):
         label = get_object_or_404(Label, id=id)
         return render(request,
