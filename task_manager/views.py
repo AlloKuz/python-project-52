@@ -21,7 +21,7 @@ class LoginView(views.View):
         if user is not None:
             login(request, user)
             messages.info(request, _("Вы залогинены"))
-            return render(request, "task_manager/index.html")
+            return redirect(reverse('index'))
 
         messages.error(request, _("Пожалуйста, введите правильные "
                                   "имя пользователя и пароль. Оба поля "
