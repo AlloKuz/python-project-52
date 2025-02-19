@@ -1,0 +1,77 @@
+{% load django_bootstrap5 %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Task manager{% endblock %}</title>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+<body>
+    <div class="container-fluid bg-dark">
+        <nav class="navbar navbar-dark navbar-expand-md justify-content-between">
+            <ul class="navbar-nav align-items-center mr-auto">
+                <li class="nav-item">
+                    <a href="/" class="navbar-brand">{% translate "Task manager" %}</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'users' %}" class="nav-link">{% translate "Users" %}</a>
+                </li>
+
+                {% if request.user.is_authenticated %}
+
+                <li class="nav-item">
+                    <a href="{% url 'statuses' %}" class="nav-link">{% translate "Statuses" %}</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{% url 'labels' %}" class="nav-link">{% translate "Labels" %}</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{% url 'tasks' %}" class="nav-link">{% translate "Tasks" %}</a>
+                </li>
+
+                <li class="nav-item">
+                    <form action="{% url 'logout' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="submit" class="nav-link" value="{% translate 'Log out' %}">
+                    </form>
+                </li>
+
+                {% else %}
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link">{% translate "Log in" %}</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'users_create' %}" class="nav-link">{% translate "Sign up" %}</a>
+                </li>
+                {% endif %}
+            </ul>
+            <form class="nav-item" action="{% url 'set_language' %}" method="post">
+                {% csrf_token %}
+                <input name="next" type="hidden" value="{{ redirect_to }}">
+                <select class="custom_select" data-bs-theme="dark" name="language" onchange="this.form.submit();">
+                    {% get_current_language as LANGUAGE_CODE %}
+                    {% get_available_languages as LANGUAGES %}
+                    {% get_language_info_list for LANGUAGES as languages %}
+                    {% for language in languages %}
+                        <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                            {{ language.name_local }} ({{ language.code }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </form>
+        </nav>
+    </div>
+    <div class="container">
+        {% bootstrap_messages %}
+    </div>
+    <div class="container bg-light p-5 my-5 border border-secondary rounded">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>

@@ -11,9 +11,9 @@ class TasksFilter(django_filters.FilterSet):
     author = django_filters.BooleanFilter(method="is_author",
                                           widget=CheckboxInput(),
                                           field_name="author",
-                                          label=_("Только свои задачи"))
+                                          label=_("Is author"))
     labels = django_filters.ModelChoiceFilter(queryset=Label.objects,
-                                              label="Метка")
+                                              label="Label")
 
     class Meta:
         model = Task

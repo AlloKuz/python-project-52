@@ -4,12 +4,12 @@ from django.utils.translation import gettext_lazy as _
 
 
 class Status(models.Model):
-    name = models.CharField(_("Имя"), max_length=32, unique=True)
-    created_at = models.DateTimeField(_("Дата создания"), auto_now_add=True)
+    name = models.CharField(_("Name"), max_length=32, unique=True)
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = _("Статус")
-        verbose_name_plural = _("Статусы")
+        verbose_name = _("Status")
+        verbose_name_plural = _("Statuses")

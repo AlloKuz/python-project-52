@@ -7,28 +7,28 @@ from labels.models import Label
 
 
 class Task(models.Model):
-    name = models.CharField(_("Имя"), max_length=128, null=False)
-    description = models.TextField(_("Описание"), blank=True)
+    name = models.CharField(_("Name"), max_length=128, null=False)
+    description = models.TextField(_("Description"), blank=True)
 
-    executor = models.ForeignKey(verbose_name=_("Исполнитель"),
+    executor = models.ForeignKey(verbose_name=_("Executor"),
                                  to=User, on_delete=models.PROTECT,
                                  blank=True, null=True)
-    status = models.ForeignKey(verbose_name=_("Статус"), to=Status,
+    status = models.ForeignKey(verbose_name=_("Status"), to=Status,
                                on_delete=models.PROTECT)
-    author = models.ForeignKey(verbose_name=_("Автор"), to=User,
+    author = models.ForeignKey(verbose_name=_("Author"), to=User,
                                on_delete=models.PROTECT,
                                related_name="author", blank=True, null=True)
 
-    labels = models.ManyToManyField(verbose_name=_("Метки"),
+    labels = models.ManyToManyField(verbose_name=_("Labels"),
                                     to=Label,
                                     blank=True)
 
-    created_at = models.DateTimeField(_("Дата создания"), auto_now_add=True)
-    updated_at = models.DateTimeField(_("Дата изменения"), auto_now=True)
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
 
     class Meta:
-        verbose_name = _("Задача")
-        verbose_name_plural = _("Задачи")
+        verbose_name = _("Task")
+        verbose_name_plural = _("Tasks")
 
     def __str__(self):
         return self.name

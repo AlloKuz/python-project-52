@@ -4,13 +4,13 @@
 
 {% block content %}
 
-<h1>{% translate "Пользователи" %}</h1>
+<h1>{% translate "Users" %}</h1>
 <table class="table table-striped">
     <thead>
         <th>ID</th>
-        <th>{% translate "Имя пользователя" %}</th>
-        <th>{% translate "Полное имя" %}</th>
-        <th>{% translate "Дата создания" %}</th>
+        <th>{% translate "Username" %}</th>
+        <th>{% translate "Full name" %}</th>
+        <th>{% translate "Created at" %}</th>
         <th></th>
     </thead>
     <tbody>
@@ -21,9 +21,9 @@
             <td>{{ user.first_name }} {{ user.last_name }}</td>
             <td>{{ user.date_joined|date:"d M Y" }}</td>
             <td >
-                <a href="{% url 'users_update' pk=user.id %}">{% translate "Изменить" %}</a>
+                <a href="{% url 'users_update' pk=user.id %}">{% translate "Edit" %}</a>
                 <br>
-                <a href="{% url 'users_delete' pk=user.id %}">{% translate "Удалить" %}</a>
+                <a href="{% url 'users_delete' pk=user.id %}">{% translate "Delete" %}</a>
             </td>
         </tr>
         {% endfor %}

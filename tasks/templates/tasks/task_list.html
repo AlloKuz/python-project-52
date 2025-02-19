@@ -1,18 +1,48 @@
-{% extends "tasks/base.html" %}
+{% extends "layout/base.html" %}
 
-{% block title %}Список задач{% endblock %}
+{% load i18n %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-    <h2>Список задач</h2>
-    {% for task in tasks %}
-        <div>
-            <h3><a href="{% url 'task_detail' task.id %}">{{ task.title }}</a></h3>
-            <p>{{ task.description }}</p>
-            <a href="{% url 'task_edit' task.id %}">Редактировать</a> |
-            <a href="{% url 'task_delete' task.id %}">Удалить</a>
-        </div>
-    {% empty %}
-        <p>Задач пока нет.</p>
-    {% endfor %}
-    <a href="{% url 'task_create' %}">Создать новую задачу</a>
-{% endblock %}
+
+<h1>{% translate "Tasks" %}</h1>
+<a class="btn btn-primary my-2" href="{% url 'tasks_create' %}">
+    {% translate "Create task" %}
+</a>
+
+    <form method="get" class="form-inline center">
+        {% csrf_token %}
+        {{ filters.form|crispy }}
+        <input class="btn btn-primary" type="submit" value="{% translate 'Show' %}"/>
+    </form>
+
+<table class="table table-striped mt-4">
+    <thead>
+        <th>ID</th>
+        <th>{% translate "Name" %}</th>
+        <th>{% translate "Status" %}</th>
+        <th>{% translate "Author" %}</th>
+        <th>{% translate "Executor" %}</th>
+        <th>{% translate "Created at" %}</th>
+        <th></th>
+    </thead>
+    <tbody>
+        {% for task in filters.qs %}
+        <tr>
+            <td>{{ task.id }}</td>
+            <td>
+                <a href="{% url 'tasks_show' pk=task.id %}">{{ task.name }}</a>
+            </td>
+            <td>{{ task.status }}</td>
+            <td>{{ task.author|default:"" }}</td>
+            <td>{{ task.executor|default:"" }}</td>
+            <td>{{ task.created_at|date:"d M Y H:i" }}</td>
+            <td >
+                <a href="{% url 'tasks_update' pk=task.id %}">{% translate "Edit" %}</a>
+                <br>
+                <a href="{% url 'tasks_delete' pk=task.id %}">{% translate "Delete" %}</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -5,12 +5,12 @@
 
 {% block content %}
 
-<h1>{% translate "Редактировать пользователя" %}</h1>
+<h1>{% translate "Edit user" %}</h1>
 
 <form action="{% url 'users_update' pk=user.id %}" method="post">
     {% bootstrap_form form %}
     {% csrf_token %}
 
-    {% translate "Изменить" as button_save %}
+    {% translate "Edit" as button_save %}
     {% bootstrap_button button_save button_type="submit" button_class="btn-primary" %}
 </form>

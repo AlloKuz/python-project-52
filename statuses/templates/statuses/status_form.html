@@ -5,8 +5,8 @@
 
 {% block content %}
 
-<h1>{% translate "Create task" %}</h1>
-<form class="form col-5 py-2" action="{% url 'tasks_create' %}" method="post">
+<h1>{% translate "Create status" %}</h1>
+<form class="form col-5 py-2" action="{% url 'statuses_create' %}" method="post">
     {% csrf_token %}
     {% bootstrap_form form %}
 

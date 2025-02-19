@@ -1,12 +1,14 @@
-{% extends "tasks/base.html" %}
+{% extends "layout/base.html" %}
 
-{% block title %}Удаление задачи{% endblock %}
+{% load i18n %}
 
 {% block content %}
-    <h2>Удалить задачу "{{ task.title }}"?</h2>
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit">Удалить</button>
-    </form>
-    <a href="{% url 'task_list' %}">Отмена</a>
-{% endblock %}
+
+<h1 class="h1">{% translate "Delete task" %}</h1>
+<p class="py-2">{% translate "Are you sure you want to delete task" %} {{ task }}?</p>
+<form class="form col-6" method="post" action="{% url 'tasks_delete' pk=task.id %}">
+    {% csrf_token %}
+    <div class="form-outline col-3">
+        <input type="submit" class="btn btn-primary w-100" value="{% translate 'Yes, delete' %}">
+    </div>
+</form>

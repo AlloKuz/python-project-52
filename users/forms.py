@@ -14,11 +14,11 @@ class UserCreateForm(UserCreationForm):
 
 class UserUpdateForm(forms.ModelForm):
     password1 = forms.CharField(
-        label=_("Пароль"),
+        label=_("Password"),
         widget=forms.PasswordInput(),
     )
     password2 = forms.CharField(
-        label=_("Подтверждение пароля"),
+        label=_("Confirm password"),
         widget=forms.PasswordInput()
     )
 
@@ -33,10 +33,10 @@ class UserUpdateForm(forms.ModelForm):
 
         if len(password) < 3:
             self.add_error('password1',
-                           _('Пароль должен быть больше 3 символов'))
+                           _('Password should be at least 3 symbols'))
 
         if password != confirm_password:
             self.add_error('password2',
-                           _("Пароли не совпадают"))
+                           _("Passwords doesn't match"))
 
         return cleaned_data

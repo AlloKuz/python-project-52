@@ -153,7 +153,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'ru'
+LANGUAGE_CODE = 'en'
 LANGUAGES = (
     ("ru", _("Russian")),
     ("en", _("English")),
@@ -180,9 +180,10 @@ STATIC_ROOT = "static/"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-ROLLBAR = {
-    'access_token': os.getenv("ROLLBAR_TOKEN"),
-    'environment': 'development' if DEBUG else 'production',
-    'code_version': '1.0',
-    'root': BASE_DIR,
-}
+if not DEBUG:
+    ROLLBAR = {
+        'access_token': os.getenv("ROLLBAR_TOKEN"),
+        'environment': 'development' if DEBUG else 'production',
+        'code_version': '1.0',
+        'root': BASE_DIR,
+    }

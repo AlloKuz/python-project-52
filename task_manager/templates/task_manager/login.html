@@ -4,36 +4,36 @@
 
 {% block content %}
 
-<h1 class="h1">{% translate "Вход" %}</h1>
+<h1 class="h1">{% translate "Log in" %}</h1>
 
 {% if request.user.is_authenticated %}
 
-<p class="py-3">{% translate "Привет" %}, {{ request.user.username }}!</p>
+<p class="py-3">{% translate "Hello" %}, {{ request.user.username }}!</p>
 
 <form action="{% url 'logout' %}" method="post">
     {% csrf_token %}
-    <input type="submit" value="{% translate 'Выйти' %}">
+    <input type="submit" value="{% translate 'Log out' %}">
 </form>
 
 {% else %}
 <form class="form col-6 pt-2" method="post" action="{% url 'login' %}">
     {% csrf_token %}
     <div class="form-outline py-2">
-        {% translate "Имя пользователя" as field_name %}
+        {% translate "Username" as field_name %}
         <label for="loginUsername" class="form-label">{{ field_name }}</label>
         <input type="text" class="form-control"
                name="loginUsername" placeholder="{{ field_name }}"
                value="{{ username }}" id="loginUsername">
     </div>
     <div class="form-outline py-2">
-        {% translate "Пароль" as field_name %}
+        {% translate "Password" as field_name %}
         <label for="loginPassword" class="form-label">{{ field_name }}</label>
         <input type="password" class="form-control"
                name="loginPassword" placeholder="{{ field_name }}"
                id="loginPassword">
     </div>
     <div class="form-outline py-2 col-2">
-        <input type="submit" class="btn btn-primary w-100" value="{% translate 'Войти' %}">
+        <input type="submit" class="btn btn-primary w-100" value="{% translate 'Log in' %}">
     </div>
 </form>
 

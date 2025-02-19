@@ -1,15 +1,51 @@
-{% extends "tasks/base.html" %}
+{% extends "layout/base.html" %}
 
-{% block title %}{{ task.title }}{% endblock %}
+{% load i18n %}
 
 {% block content %}
-    <h2>{{ task.title }}</h2>
-    <p>{{ task.description }}</p>
-    <p>Статус: {{ task.status }}</p>
-    <p>Метки: {% for label in task.labels.all %}{{ label.name }} {% endfor %}</p>
 
-    <a href="{% url 'task_edit' task.id %}">Редактировать</a> |
-    <a href="{% url 'task_delete' task.id %}">Удалить</a>
-    <br><br>
-    <a href="{% url 'task_list' %}">Назад</a>
-{% endblock %}
+<h1 class="py-3">{% translate "Task Detail" %}</h1>
+
+<div class="card">
+    <div class="card-header bg-secondary text-light">
+        <h1>{{ task.name }}</h1>
+    </div>
+    <div class="card-body">
+        <div class="">{{ task.description }}</div>
+        <hr>
+        <table class="table">
+            <tr>
+                <th>{% translate "Author" %}</th>
+                <td>{{ task.author|default:"" }}</td>
+            </tr>
+            <tr>
+                <th>{% translate "Executor" %}</th>
+                <td>{{ task.executor|default:"" }}</td>
+            </tr>
+            <tr>
+                <th>{% translate "Status" %}</th>
+                <td>{{ task.status|default:"" }}</td>
+            </tr>
+            <tr>
+                <th>{% translate "Created at" %}</th>
+                <td>{{ task.created_at }}</td>
+            </tr>
+        </table>
+        <h5>{% translate "Labels" %}:</h5>
+        <ul>
+            {% for label in task.labels.all %}
+            <li>{{ label.name }}</li>
+            {% endfor %}
+        </ul>
+        <div class="pt-2">
+            <a href="{% url 'tasks_update' pk=task.id %}">
+                {% translate "Edit" %}
+            </a>
+        </div>
+        <div class="pt-2" >
+            <a href="{% url 'tasks_delete' pk=task.id %}">
+                {% translate "Delete" %}
+            </a>
+        </div>
+    </div>
+</div>
