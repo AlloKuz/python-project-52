@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.utils.translation import gettext as _
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models.deletion import ProtectedError
 
 from users.forms import UserCreateForm, UserUpdateForm
 
@@ -32,8 +33,6 @@ class UserFormView(views.View):
 
 
 class UserUpdateView(LoginRequiredMixin, views.View):
-    login_url = '/login/'
-    error_message = "login required"
 
     def get(self, request, id, *args, **kwargs):
         if request.user.id != id:
@@ -59,14 +58,14 @@ class UserUpdateView(LoginRequiredMixin, views.View):
             return redirect(reverse('index'))
         return render(request, "users/update.html",
                       {"form": form, "user_id": id})
-    
+
     def handle_no_permission(self, *args, **kwargs):
-        messages.error(self.request, _("Необходимо авторизоваться!"))
+        messages.error(self.request, _("Вы не авторизованы! "
+                                       "Пожалуйста, выполните вход."))
         return super().handle_no_permission()
 
 
 class UserDeleteView(LoginRequiredMixin, views.View):
-    login_url = "/login/"
 
     def get(self, request, id, *args, **kwargs):
         if request.user.id != id:
@@ -82,12 +81,16 @@ class UserDeleteView(LoginRequiredMixin, views.View):
             messages.error(request, _("У вас нет прав для изменения "
                                       "другого пользователя."))
             return redirect(reverse('users'))
-        user = User.objects.get(id=id)
-        if user:
+        try:
+            user = User.objects.get(id=id)
             user.delete()
             messages.info(request, _("Пользователь успешно удален"))
+        except ProtectedError:
+            messages.error(request, _("Невозможно удалить пользователя, "
+                                      "потому что он используется"))
         return redirect(reverse("users"))
 
     def handle_no_permission(self, *args, **kwargs):
-        messages.error(self.request, _("Необходимо авторизоваться!"))
+        messages.error(self.request, _("Вы не авторизованы! "
+                                       "Пожалуйста, выполните вход."))
         return super().handle_no_permission()

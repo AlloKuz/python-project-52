@@ -34,7 +34,7 @@ class TasksCreateView(LoginRequiredMixin, View):
             obj = form.save(commit=False)
             obj.author = request.user
             obj.save()
-            messages.info(request, _("Задача успешно добавлена"))
+            messages.info(request, _("Задача успешно создана"))
             return redirect(reverse("tasks"))
         return render(request, "tasks/create.html",
                       {"form": form}, status=300)
@@ -61,7 +61,6 @@ class TasksUpdateView(LoginRequiredMixin, View):
             form.save()
             messages.info(request, _("Задача успешно изменена"))
             return redirect(reverse("tasks"))
-        messages.error(request, _("Ошибка изменения задачи"))
         return render(request, "tasks/update.html",
                       {"form": form, "task": task})
 
