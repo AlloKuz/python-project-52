@@ -4,127 +4,90 @@ from django.shortcuts import reverse
 from users.models import User
 from tasks.models import Task
 from labels.models import Label
-from statuses.models import Status
-
-
-USER = {"username": "test_user"}
-LOGIN_DATA = {
-    "username": USER["username"],
-    "password": USER["username"]
-}
-STATUS = {"name": "test_status"}
 
 
 class LabelTest(TestCase):
+    fixtures = ["sample.json"]
 
     def setUp(self):
-        if not User.objects.filter(**USER).exists():
-            User.objects.create_user(**LOGIN_DATA)
-
-        self.client = Client()
-        self.client.login(**LOGIN_DATA)
-
-        self.status = Status.objects.create(**STATUS)
-        self.user = User.objects.get(**USER)
-        self.label = Label.objects.create(name="test_label")
-        self.task = Task.objects.create(
-            name="test_task",
-            status=self.status,
-            author=self.user,
-        )
-        self.task.labels.set([self.label])
-
-    def tearDown(self):
-        if self.task:
-            self.task.delete()
-
-        user = User.objects.filter(**USER)
-        if user.exists():
-            self.user.delete()
-
-        status = Status.objects.filter(**STATUS)
-        if status.exists():
-            self.status.delete()
-
-        label = Label.objects.filter(name="test_label")
-        if label.exists():
-            self.label.delete()
+        self.client = Client(headers={"Accept-Language": "en"})
+        self.client.login(username="test_user",
+                          password="test_password")
+        self.user = User.objects.get(username="test_user")
+        self.label = Label.objects.get(name="test_label")
+        self.task = Task.objects.get(name="test_task")
 
     def test_unauthorized(self):
         self.client.logout()
 
-        response = self.client.get(reverse("labels"))
-
-        self.assertEqual(response.status_code, 302)
+        urls = [
+            reverse("labels"),
+            reverse("labels_create"),
+            reverse("labels_update", kwargs={"pk": self.label.id}),
+            reverse("labels_delete", kwargs={"pk": self.label.id}),
+        ]
+        
+        for url in urls:
+            response = self.client.get(url, follow=True)
+            self.assertIn(b"First you need to log in", response.content)
+            self.assertEqual(reverse("login"), response.request['PATH_INFO'])
 
     def test_LabelsView(self):
-
         response = self.client.get(reverse("labels"))
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"ID", response.content)
+        self.assertIn(b"Labels", response.content)
         self.assertIn(b"test_label", response.content)
 
     def test_LabelCreateView(self):
-        self.client.post(
-            reverse("labels_create"),
-            data={
-                "name": "test_label_create",
-            }
-        )
-
-        new_label = Label.objects.filter(name="test_label_create")
-        self.assertTrue(new_label.exists())
-
-        response = self.client.get(
-            reverse("labels_create"),
-            headers={"accept-language": "en"},
-        )
+        # POST
+        response = self.client.post(reverse("labels_create"),
+                                    data={"name": "test_create"},
+                                    follow=True)
         self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Label created", response.content)
+        self.assertEqual(reverse("labels"), response.request['PATH_INFO'])
+        self.assertTrue(Label.objects.filter(name="test_create").exists())
 
-        Label.objects.get(name="test_label_create").delete()
+        # GET
+        response = self.client.get(reverse("labels_create"))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Create label", response.content)
 
     def test_LabelUpdateView(self):
-        response = self.client.get(
-            reverse("labels_update",
-                    kwargs={"id": self.label.id}),
-            headers={"accept-language": "en"},
-        )
+        url_for_update = reverse("labels_update",
+                                 kwargs={"pk": self.label.id})
+        # GET
+        response = self.client.get(url_for_update)
 
         self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Edit label", response.content)
         self.assertIn(b"test_label", response.content)
 
-        response = self.client.post(
-            reverse("labels_update",
-                    kwargs={"id": self.label.id}),
-            headers={"accept-language": "en"},
-            data={
-                "name": "test_label_updated",
-            }
-        )
+        # POST
+        response = self.client.post(url_for_update,
+                                    data={"name": "test_updated"},
+                                    follow=True)
 
-        self.assertEqual(response.status_code, 302)
-
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Label updated", response.content)
+        self.assertEqual(reverse("labels"), response.request['PATH_INFO'])
         self.assertFalse(Label.objects.filter(name="test_label").exists())
-        self.assertTrue(Label.objects.filter(
-            name="test_label_updated").exists())
-
-        Label.objects.filter(name="test_label_updated").delete()
+        self.assertTrue(Label.objects.filter(name="test_updated").exists())
 
     def test_LabelDeleteView(self):
-        response = self.client.post(
-            reverse("labels_delete",
-                    kwargs={"id": self.label.id}),
-            headers={"accept-language": "en"},
-        )
-        self.assertEqual(response.status_code, 302)
+        path_to_label = reverse("labels_delete",
+                                kwargs={"pk": self.label.id})
+        # when task exists
+        response = self.client.post(path_to_label, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Deletion error", response.content)
         self.assertTrue(Label.objects.filter(name="test_label").exists())
 
+        # when task removed
         self.label.task_set.all().delete()
-        response = self.client.post(
-            reverse("labels_delete",
-                    kwargs={"id": self.label.id}),
-            headers={"accept-language": "en"},
-        )
-        self.assertEqual(response.status_code, 302)
+    
+        response = self.client.post(path_to_label, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Label deleted", response.content)
         self.assertFalse(Label.objects.filter(name="test_label").exists())
