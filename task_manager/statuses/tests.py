@@ -11,9 +11,9 @@ logger = logging.getLogger(__name__)
 
 class StatusViewTest(TestCase):
     fixtures = ["sample.json"]
+    data = load("task_manager/fixtures/user_data.json")
 
     def setUp(self):
-        self.data = load("task_manager/fixtures/user_data.json")
         self.client = Client(headers={"Accept-Language": "en"})
         self.client.login(**self.data["user"])
         self.status = Status.objects.get(**self.data["status"])

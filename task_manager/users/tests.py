@@ -8,10 +8,9 @@ from task_manager.users.models import User
 
 class UsersTest(TestCase):
     fixtures = ["sample.json"]
+    data = load("task_manager/fixtures/user_data.json")
 
     def setUp(self):
-        self.data = load("task_manager/fixtures/user_data.json")
-
         self.client = Client(headers={"Accept-Language": "en"})
         self.user = User.objects.get(username=self.data["user"]["username"])
 
@@ -30,7 +29,7 @@ class UsersTest(TestCase):
         self.assertIn(b"User created", response.content)
         self.assertEqual(reverse("login"), response.request['PATH_INFO'])
 
-    def test_UserUpdateView(self):
+    def test_UserUpdateView_get(self):
         url_for_update = reverse("users_update", kwargs={"pk": self.user.id})
         # unauthorized
         response = self.client.get(url_for_update, follow=True)
@@ -48,19 +47,34 @@ class UsersTest(TestCase):
         self.assertIn(b"Username", response.content)
         self.assertIn(self.data["user"]["username"].encode(), response.content)
 
-        # POST
+    def test_UserUpdateView_post(self):
+        self.client.login(**self.data["user"])
+        User.objects.create_user(**self.data["new_user_login"])
+        new_user = User.objects.get(username=self.data["new_user"]["username"])
+
+        # authenticated, not authorized
+        # 'user_test' trying to update 'new_user_test'
         response = self.client.post(
-            url_for_update,
+            reverse("users_update", kwargs={"pk": new_user.id}),
             follow=True,
             data=self.data["new_user"]
+        )
+        self.assertIn(b"not allowed to edit another user", response.content)
+
+        # authenticated, authorized
+        response = self.client.post(
+            reverse("users_update", kwargs={"pk": self.user.id}),
+            follow=True,
+            data=self.data["user_updated"],
         )
 
         self.assertEqual(response.status_code, HttpResponse.status_code)
         self.assertIn(b"User updated", response.content)
         self.assertEqual(
             User.objects.get(
-                username=self.data["new_user"]["username"]).first_name,
-            self.data["new_user"]["first_name"])
+                username=self.user.username
+            ).first_name,
+            "updated_test_user")
 
     def test_UserDeleteView(self):
         url_object = reverse("users_delete", kwargs={"pk": self.user.id})
@@ -81,6 +95,18 @@ class UsersTest(TestCase):
         user = User.objects.create_user(**self.data["new_user_login"])
         self.client.login(**self.data["new_user_login"])
 
+        # try to delete another user
+        response = self.client.post(reverse("users_delete",
+                                            kwargs={"pk": self.user.id}),
+                                    follow=True)
+        self.assertRedirects(response, reverse("users"))
+        self.assertTrue(User.objects
+                        .filter(username=self.data["new_user"]["username"])
+                        .exists())
+        self.assertIn(b"You are not allowed to delete another user",
+                      response.content)
+
+        # authorized to delete
         response = self.client.post(reverse("users_delete",
                                             kwargs={"pk": user.id}),
                                     follow=True)
