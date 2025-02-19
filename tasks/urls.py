@@ -1,11 +1,13 @@
 from django.urls import path
-from .views import task_list, task_detail, task_create, task_edit, task_delete, register
+
+from tasks import views
 
 urlpatterns = [
-    path("", task_list, name="task_list"),
-    path("<int:task_id>/", task_detail, name="task_detail"),
-    path("create/", task_create, name="task_create"),
-    path("<int:task_id>/edit/", task_edit, name="task_edit"),
-    path("<int:task_id>/delete/", task_delete, name="task_delete"),
-    path("register/", register, name="register"),
+    path('', views.TasksView.as_view(), name="tasks"),
+    path('create/', views.TasksCreateView.as_view(), name="tasks_create"),
+    path('<int:id>/', views.TasksShowView.as_view(), name="tasks_show"),
+    path('<int:id>/update', views.TasksUpdateView.as_view(),
+         name="tasks_update"),
+    path('<int:id>/delete', views.TasksDeleteView.as_view(),
+         name="tasks_delete"),
 ]
