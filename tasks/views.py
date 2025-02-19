@@ -2,19 +2,20 @@ from django.shortcuts import render, reverse, redirect
 from django.views import View
 from django.utils.translation import gettext as _
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from tasks.forms import TaskForm
 from tasks.models import Task
 
 
-class TasksView(View):
+class TasksView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         tasks = Task.objects.all()
         return render(request, "tasks/index.html",
                       {"tasks": tasks})
 
 
-class TasksCreateView(View):
+class TasksCreateView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         form = TaskForm()
         return render(request, "tasks/create.html",
@@ -32,14 +33,14 @@ class TasksCreateView(View):
                       {"form": form})
 
 
-class TasksShowView(View):
+class TasksShowView(LoginRequiredMixin, View):
     def get(self, request, id, *args, **kwargs):
         task = Task.objects.get(id=id)
         return render(request, "tasks/show.html",
                       {"task": task})
 
 
-class TasksUpdateView(View):
+class TasksUpdateView(LoginRequiredMixin, View):
     def get(self, request, id, *args, **kwargs):
         task = Task.objects.get(id=id)
         form = TaskForm(instance=task)
@@ -58,14 +59,18 @@ class TasksUpdateView(View):
                       {"form": form, "task": task})
 
 
-class TasksDeleteView(View):
+class TasksDeleteView(LoginRequiredMixin, View):
     def get(self, request, id, *args, **kwargs):
         task = Task.objects.get(id=id)
-        return render(request, "tasks/delete.html",
-                      {"task": task})
+        if task.author_id == request.user.id:
+            return render(request, "tasks/delete.html",
+                          {"task": task})
+        messages.error(request, _("Задачу может удалить только ее автор"))
+        return redirect(reverse("tasks"))
 
     def post(self, request, id, *args, **kwargs):
         task = Task.objects.get(id=id)
-        task.delete()
-        messages.info(request, _("Задача успешно удалена"))
+        if task.author_id == request.user.id:
+            task.delete()
+            messages.info(request, _("Задача успешно удалена"))
         return redirect(reverse("tasks"))
