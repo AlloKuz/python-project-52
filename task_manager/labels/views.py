@@ -50,6 +50,13 @@ class LabelDeleteView(LoginRequiredWithMessageMixin,
     success_url = reverse_lazy("labels")
     success_message = _("Label deleted")
 
+    template_name = "confirm_deletion.html"
+
+    extra_context = {
+        "page_header": _("Delete label"),
+        "deletion_msg": _("Are you sure you want to delete label")
+    }
+
     def post(self, request, pk, *args, **kwargs):
         label = get_object_or_404(Label, pk=pk)
         if label.task_set.exists():

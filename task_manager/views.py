@@ -1,38 +1,25 @@
-from django import views
-from django.shortcuts import render, redirect, reverse
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.views import LoginView, LogoutView
 
 
-class IndexView(views.View):
-    def get(self, request, *args, **kwargs):
-        return render(request, "task_manager/index.html")
+class LoginUserView(SuccessMessageMixin, LoginView):
+    success_message = _("You logged in")
+    template_name = "form.html"
+    form_class = AuthenticationForm
+    next_page = "/"
+    redirect_authenticated_user = True
+    extra_context = {
+        'page_header': _('Login'),
+        'button_text': _('Enter'),
+    }
 
 
-class LoginView(views.View):
-    def get(self, request, *args, **kwargs):
-        return render(request, "task_manager/login.html")
+class LogoutUserView(LogoutView):
+    next_page = "/"
 
     def post(self, request, *args, **kwargs):
-        username = request.POST.get("loginUsername")
-        password = request.POST.get("loginPassword")
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            messages.info(request, _("You logged in"))
-            return redirect(reverse('index'))
-
-        messages.error(request, _("Please enter correct username and password. "
-                                  "Both fields are case sensitive"))
-        return render(request,
-                      "task_manager/login.html",
-                      context={"username": username},
-                      status=403)
-
-
-class LogoutView(views.View):
-    def post(self, request, *args, **kwargs):
-        logout(request)
-        messages.info(request, _("You logged out"))
-        return redirect(reverse("index"))
+        messages.success(request, _("You logged out"))
+        return super().post(request, *args, **kwargs)

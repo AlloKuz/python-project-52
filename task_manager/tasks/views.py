@@ -75,6 +75,13 @@ class TaskDeleteView(LoginRequiredWithMessageMixin,
     success_message = _("Task deleted")
     success_url = reverse_lazy("tasks")
 
+    template_name = "confirm_deletion.html"
+
+    extra_context = {
+        "page_header": _("Delete task"),
+        "deletion_msg": _("Are you sure you want to delete task")
+    }
+
     def get(self, request, pk, *args, **kwargs):
         data = super().get(request, pk, *args, **kwargs)
         if self.object.author_id != request.user.id:

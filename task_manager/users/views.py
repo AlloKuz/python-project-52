@@ -26,7 +26,7 @@ class UserCreateView(SuccessMessageMixin, CreateView):
 
     extra_context = {
         "page_header": _("Create user"),
-        "button_text": _("Create"),
+        "button_text": _("Sign me up"),
     }
 
 
@@ -40,7 +40,7 @@ class UserUpdateView(LoginRequiredWithMessageMixin,
 
     success_message = _("User updated")
     no_auth_message = _("First you need to log in!")
-    fail_message = _("You can't edit another user")
+    fail_message = _("You are not allowed to edit another user")
 
     template_name = "form.html"
 
@@ -57,10 +57,16 @@ class UserDeleteView(LoginRequiredWithMessageMixin,
     model = User
     success_url = reverse_lazy("users")
     fail_url = reverse_lazy("users")
+    template_name = "confirm_deletion.html"
 
     success_message = _("User deleted")
-    fail_message = _("You can't update another user")
+    fail_message = _("You are not allowed to delete another user")
     no_auth_message = _("First you need to log in!")
+
+    extra_context = {
+        "page_header": _("Delete user"),
+        "deletion_msg": _("Are you sure you want to delete user")
+    }
 
     def post(self, request, pk, *args, **kwargs):
         try:

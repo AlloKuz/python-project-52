@@ -1,8 +1,10 @@
 from django.test import TestCase, Client
 from django.urls import reverse
+from django.http import HttpResponse
 import logging
 
 from task_manager.statuses.models import Status
+from task_manager.fixtures.load_fixture import load
 
 logger = logging.getLogger(__name__)
 
@@ -11,10 +13,10 @@ class StatusViewTest(TestCase):
     fixtures = ["sample.json"]
 
     def setUp(self):
+        self.data = load("task_manager/fixtures/user_data.json")
         self.client = Client(headers={"Accept-Language": "en"})
-        self.client.login(username="test_user",
-                          password="test_password")
-        self.status = Status.objects.get(name="test_status")
+        self.client.login(**self.data["user"])
+        self.status = Status.objects.get(**self.data["status"])
 
     def test_unauthorized(self):
         self.client.logout()
@@ -29,12 +31,13 @@ class StatusViewTest(TestCase):
         for url in urls:
             response = self.client.get(url, follow=True)
             self.assertIn(b"First you need to log in", response.content)
+            self.assertRedirects(response, reverse("login") + "?next=" + url)
             self.assertEqual(reverse("login"), response.request['PATH_INFO'])
 
     def test_StatusesView(self):
         response = self.client.get(reverse("statuses"))
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, HttpResponse.status_code)
         self.assertIn(b"Statuses", response.content)
         self.assertIn(b"test_status", response.content)
 
@@ -43,14 +46,13 @@ class StatusViewTest(TestCase):
         response = self.client.post(reverse("statuses_create"),
                                     data={"name": "new_test_status"},
                                     follow=True)
-        self.assertEqual(response.status_code, 200)
         self.assertIn(b"Status created", response.content)
-        self.assertEqual(reverse("statuses"), response.request['PATH_INFO'])
+        self.assertRedirects(response, reverse("statuses"))
         self.assertTrue(Status.objects.filter(name="new_test_status").exists())
 
         # GET
         response = self.client.get(reverse("statuses"), follow=True)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, HttpResponse.status_code)
         self.assertIn(b"Create status", response.content)
 
     def test_StatusUpdateView(self):
@@ -58,18 +60,17 @@ class StatusViewTest(TestCase):
                                         kwargs={"pk": self.status.id})
         # GET
         response = self.client.get(path_to_status_update, follow=True)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, HttpResponse.status_code)
         self.assertIn(b"Edit status", response.content)
-        self.assertIn(b"test_status", response.content)
+        self.assertIn(self.status.name.encode(), response.content)
 
         # POST
         response = self.client.post(path_to_status_update,
                                     data={"name": "test_updated"},
                                     follow=True)
 
-        self.assertEqual(response.status_code, 200)
         self.assertIn(b"Status updated", response.content)
-        self.assertEqual(reverse("statuses"), response.request['PATH_INFO'])
+        self.assertRedirects(response, reverse("statuses"))
         self.assertTrue(Status.objects.filter(name="test_updated").exists())
         self.assertFalse(Status.objects.filter(name="test_status").exists())
 
@@ -78,7 +79,7 @@ class StatusViewTest(TestCase):
                                  kwargs={"pk": self.status.id})
         # if task exists
         response = self.client.post(path_to_object, follow=True)
-        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, reverse("statuses"))
         self.assertIn(b"Unable to delete status", response.content)
         self.assertTrue(Status.objects.filter(name="test_status").exists())
 
@@ -86,6 +87,6 @@ class StatusViewTest(TestCase):
         self.status.task_set.all().delete()
 
         response = self.client.post(path_to_object, follow=True)
-        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, reverse("statuses"))
         self.assertIn(b"Status deleted", response.content)
         self.assertFalse(Status.objects.filter(name="test_status").exists())

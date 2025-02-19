@@ -50,6 +50,13 @@ class StatusDeleteView(LoginRequiredWithMessageMixin,
     success_url = reverse_lazy("statuses")
     success_message = _("Status deleted")
 
+    template_name = "confirm_deletion.html"
+
+    extra_context = {
+        "page_header": _("Delete status"),
+        "deletion_msg": _("Are you sure you want to delete status")
+    }
+
     def post(self, request, pk, *args, **kwargs):
         status = get_object_or_404(Status, id=pk)
         if status.task_set.exists():
