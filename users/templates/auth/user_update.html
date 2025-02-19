@@ -7,7 +7,7 @@
 
 <h1>{% translate "Редактировать пользователя" %}</h1>
 
-<form action="{% url 'users_update' id=user_id %}" method="post">
+<form action="{% url 'users_update' pk=user.id %}" method="post">
     {% bootstrap_form form %}
     {% csrf_token %}
 

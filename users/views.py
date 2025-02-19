@@ -1,97 +1,61 @@
-from django import views
-from django.shortcuts import render, reverse, redirect, get_object_or_404
+from django.contrib.messages.views import SuccessMessageMixin
+from django.shortcuts import reverse, redirect
 from django.contrib import messages
+from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models.deletion import ProtectedError
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.forms import SetPasswordForm
 
-from users.forms import UserCreateForm, UserUpdateForm
-
-
-class UsersView(views.View):
-    def get(self, request, *args, **kwargs):
-        users = User.objects.all()
-        return render(request, "users/users.html",
-                      context={"users": users})
+from users.forms import UserCreateForm
 
 
-class UserFormView(views.View):
-    def get(self, request, *args, **kwargs):
-        form = UserCreateForm()
-        return render(request, "users/signup.html",
-                      {"form": form})
-
-    def post(self, request, *args, **kwargs):
-        form = UserCreateForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.info(request, _("Пользователь успешно зарегистрирован"))
-            return redirect(reverse('login'))
-        return render(request, "users/signup.html",
-                      {"form": form},
-                      status=400)
+class UserListView(ListView):
+    model = User
 
 
-class UserUpdateView(LoginRequiredMixin, views.View):
+class UserCreateView(SuccessMessageMixin, CreateView):
+    model = User
+    form_class = UserCreateForm
+    success_message = _("Пользователь успешно зарегистрирован")
+    success_url = reverse_lazy("login")
 
-    def get(self, request, id, *args, **kwargs):
-        if request.user.id != id:
+
+class UserUpdateView(LoginRequiredMixin, UpdateView, SetPasswordForm):
+    model = User
+    # form_class = UserUpdateForm
+    fields = ["first_name", "last_name", "username"]
+    success_message = _("Пользователь успешно изменен")
+    success_url = reverse_lazy("users")
+    template_name_suffix = "_update"
+
+    def get(self, request, pk, *args, **kwargs):
+        if request.user.id != pk:
             messages.error(request, _("У вас нет прав для изменения "
                                       "другого пользователя."))
-            return redirect(reverse('users'))
-        user = get_object_or_404(User, id=id)
-        form = UserUpdateForm(instance=user)
-        return render(request, "users/update.html",
-                      {"form": form, "user_id": id})
+            return redirect(reverse_lazy('users'))
+        return super().get(request, pk, *args, **kwargs)
 
-    def post(self, request, id, *args, **kwargs):
-        if request.user.id != id:
+
+class UserDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+    model = User
+    success_message = _("Пользователь успешно удален")
+    success_url = reverse_lazy("users")
+
+    def get(self, request, pk, *args, **kwargs):
+        if request.user.id != pk:
             messages.error(request, _("У вас нет прав для изменения "
                                       "другого пользователя."))
-            return redirect(reverse('users'))
-        user = get_object_or_404(User, id=id)
-        form = UserUpdateForm(data=request.POST, instance=user)
-        if form.is_valid():
-            form.save()
-            messages.info(request, _("Пользователь успешно изменен"))
-            return redirect(reverse('users'))
-        return render(request, "users/update.html",
-                      {"form": form, "user_id": id},
-                      status=400)
-
-    def handle_no_permission(self, *args, **kwargs):
-        messages.error(self.request, _("Вы не авторизованы! "
-                                       "Пожалуйста, выполните вход."))
-        return super().handle_no_permission()
-
-
-class UserDeleteView(LoginRequiredMixin, views.View):
-
-    def get(self, request, id, *args, **kwargs):
-        if request.user.id != id:
-            messages.error(request, _("У вас нет прав для изменения "
-                                      "другого пользователя."))
-            return redirect(reverse('users'))
-        user = get_object_or_404(User, id=id)
-        return render(request, "users/delete.html",
-                      {"user": user})
-
-    def post(self, request, id, *args, **kwargs):
-        if request.user.id != id:
-            messages.error(request, _("У вас нет прав для изменения "
-                                      "другого пользователя."))
-            return redirect(reverse('users'))
+            return redirect(reverse_lazy('users'))
+        return super().get(request, pk, *args, **kwargs)
+    
+    def post(self, request, pk, *args, **kwargs):
         try:
-            user = get_object_or_404(User, id=id)
-            user.delete()
-            messages.info(request, _("Пользователь успешно удален"))
+            data = super().post(request, pk, *args, **kwargs)
         except ProtectedError:
             messages.error(request, _("Невозможно удалить пользователя, "
                                       "потому что он используется"))
-        return redirect(reverse("users"))
-
-    def handle_no_permission(self, *args, **kwargs):
-        messages.error(self.request, _("Вы не авторизованы! "
-                                       "Пожалуйста, выполните вход."))
-        return super().handle_no_permission()
+            return redirect(reverse("users"))
+        return data

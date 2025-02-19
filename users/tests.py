@@ -1,88 +1,99 @@
 import unittest
 
+from django.contrib.auth.models import User
 from django.test import Client
 from django.urls import reverse
-from django.contrib.auth.models import User
 import logging
-
-from statuses.models import Status
 
 logger = logging.getLogger(__name__)
 
 
-class StatusViewTest(unittest.TestCase):
+class UsersViewTest(unittest.TestCase):
+    # Test: task_manager.views.UsersView
 
     def setUp(self):
-        if not User.objects.filter(username="test_user").exists():
-            User.objects.create_user(username="test_user",
-                                     password="test_password")
-
-        self.client = Client()
-        self.client.login(username="test_user",
-                          password="test_password")
-        Status.objects.create(name="test_status")
+        User.objects.create_user(first_name="test_username",
+                                 username="test_user",
+                                 password="test_password")
 
     def tearDown(self):
-        if User.objects.filter(username="test_user").exists():
-            User.objects.get(username="test_user").delete()
-        if Status.objects.filter(name="test_status").exists():
-            Status.objects.get(name="test_status").delete()
+        User.objects.get(username="test_user").delete()
 
-    def test_read_unauthorized(self):
+    def test_status_and_column_name(self):
+        client = Client()
+        response = client.get(reverse('users'))
+        self.assertEqual(200, response.status_code)
+        self.assertIn(b"test_username", response.content)
 
-        self.client.logout()
 
-        response = self.client.get(reverse("statuses"))
+class TestUserFormView(unittest.TestCase):
 
+    def setUp(self):
+        User.objects.create_user(first_name="test_first_name",
+                                 username="test_user",
+                                 password="test_password")
+
+    def tearDown(self):
+        User.objects.get(username="test_user").delete()
+
+    def test_post(self):
+        client = Client()
+        client.post(reverse("users_create"),
+                    data={"username": "test_user_post",
+                          "password1": "test_user_post",
+                          "password2": "test_user_post"}
+                    )
+        user = User.objects.get(username="test_user_post")
+        self.assertEqual("test_user_post", user.username)
+
+        User.objects.get(username="test_user_post").delete()
+
+    def test_update_unauthorized(self):
+        client = Client()
+
+        user = User.objects.get(username="test_user")
+
+        response = client.get(reverse("users_update",
+                                      kwargs={"pk": user.id}))
+            
         self.assertEqual(response.status_code, 302)
-        # self.assertIn(b"alert-danger", response.content)
 
-    def test_read_authorized(self):
+    def test_update_authorized(self):
+        client = Client()
 
-        response = self.client.get(reverse("statuses"))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b"test_status", response.content)
-
-    def test_create(self):
-
-        self.client.post(reverse("statuses_create"),
-                         data={"name": "new_test_status"})
-
-        response = self.client.get(reverse("statuses"))
+        client.login(username="test_user",
+                     password="test_password")
+        user = User.objects.get(username="test_user")
+        response = client.get(reverse("users_update",
+                                      kwargs={"pk": user.id}))
 
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(Status.objects.filter(name="new_test_status").exists())
+        self.assertIn(b"test_user", response.content)
+        self.assertIn(b"test_first_name", response.content)
 
-        Status.objects.filter(name="new_test_status").delete()
+        client.post(reverse("logout"))
 
-    def test_update(self):
-
-        status = Status.objects.get(name="test_status")
-        response = self.client.get(reverse("statuses_update",
-                                           kwargs={"id": status.id}))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b"test_status", response.content)
-
-        response = self.client.post(reverse("statuses_update",
-                                            kwargs={"id": status.id}),
-                                    data={"name": "test_status_updated"})
-
-        self.assertTrue(Status.objects.filter(name="test_status_updated")
-                        .exists())
-        self.assertFalse(Status.objects.filter(name="test_status").exists())
-
-        Status.objects.filter(name="test_status_updated").delete()
+        response = client.get(reverse("users_update",
+                                      kwargs={"pk": user.id}))
+        self.assertEqual(response.status_code, 302)
 
     def test_delete(self):
+        client = Client()
 
-        status = Status.objects.get(name="test_status")
+        User.objects.create_user(username="test_user_delete",
+                                 password="test_delete")
+        client.login(username="test_user_delete",
+                     password="test_delete")
+        user = User.objects.get(username="test_user_delete")
 
-        self.client.post(reverse("statuses_delete",
-                                 kwargs={"id": status.id}))
+        client.post(reverse("users_delete",
+                            kwargs={"pk": user.id}))
 
-        self.assertFalse(Status.objects.filter(name="test_status").exists())
+        self.assertFalse(
+            User
+            .objects
+            .filter(username="test_user_delete").exists()
+        )
 
 
 if __name__ == '__main__':
