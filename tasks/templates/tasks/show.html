@@ -29,6 +29,14 @@
                 <td>{{ task.created_at }}</td>
             </tr>
         </table>
+        {% if task.labels.exists %}
+            <h5>{% translate "Метки" %}:</h5>
+            <ul>
+                {% for label in task.labels.all %}
+                <li>{{ label.name }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
         <div class="pt-2">
             <a href="{% url 'tasks_update' id=task.id %}">
                 {% translate "Редактировать" %}
