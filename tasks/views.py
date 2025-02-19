@@ -23,9 +23,10 @@ class TasksCreateView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         form = TaskForm(request.POST)
-        form.author = request.user
         if form.is_valid():
-            form.save()
+            obj = form.save(commit=False)
+            obj.author = request.user
+            obj.save()
             messages.info(request, _("Задача успешно добавлена"))
             return redirect(reverse("tasks"))
         messages.info(request, _("Ошибка добавления задачи"))
