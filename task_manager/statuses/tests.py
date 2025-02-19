@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 import logging
 
-from statuses.models import Status
+from task_manager.statuses.models import Status
 
 logger = logging.getLogger(__name__)
 

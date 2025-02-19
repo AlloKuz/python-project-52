@@ -6,8 +6,8 @@ from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from django.contrib.messages.views import SuccessMessageMixin
 
-from labels.models import Label
-from users.mixins import LoginRequiredWithMessageMixin
+from task_manager.labels.models import Label
+from task_manager.users.mixins import LoginRequiredWithMessageMixin
 
 
 class LabelListView(LoginRequiredWithMessageMixin, ListView):
@@ -21,14 +21,27 @@ class LabelCreateView(LoginRequiredWithMessageMixin,
     success_url = reverse_lazy("labels")
     success_message = _("Label created")
 
+    template_name = "form.html"
+
+    extra_context = {
+        "page_header": _("Create label"),
+        "button_text": _("Create"),
+    }
+
 
 class LabelUpdateView(LoginRequiredWithMessageMixin,
                       SuccessMessageMixin, UpdateView):
     model = Label
     fields = ["name"]
-    template_name_suffix = "_update_form"
     success_url = reverse_lazy("labels")
     success_message = _("Label updated")
+
+    template_name = "form.html"
+
+    extra_context = {
+        "page_header": _("Edit label"),
+        "button_text": _("Edit"),
+    }
 
 
 class LabelDeleteView(LoginRequiredWithMessageMixin,
@@ -40,6 +53,6 @@ class LabelDeleteView(LoginRequiredWithMessageMixin,
     def post(self, request, pk, *args, **kwargs):
         label = get_object_or_404(Label, pk=pk)
         if label.task_set.exists():
-            messages.error(request, _("Deletion error"))
+            messages.error(request, _("Unable to delete label"))
             return redirect(reverse("labels"))
         return super().post(request, *args, **kwargs)

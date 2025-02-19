@@ -45,6 +45,9 @@ RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
+if DEBUG:
+    ALLOWED_HOSTS.append("testserver")
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -59,10 +62,10 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'task_manager',
-    'users',
-    'statuses',
-    'tasks',
-    'labels',
+    'task_manager.users',
+    'task_manager.statuses',
+    'task_manager.tasks',
+    'task_manager.labels',
 ]
 
 AUTH_USER_MODEL = "users.User"
@@ -133,21 +136,21 @@ else:
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    #{
-    #    'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    #},
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    # },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
         'OPTIONS': {
             'min_length': 3,
         }
     },
-    #{
-    #    'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    #},
-    #{
-    #    'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    #},
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    # },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    # },
 ]
 
 

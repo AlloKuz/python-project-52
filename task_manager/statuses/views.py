@@ -1,68 +1,59 @@
-from django.shortcuts import render, redirect, reverse
-from django.views import View
+from django.contrib.messages.views import SuccessMessageMixin
+from django.shortcuts import redirect, get_object_or_404
+from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
+from django.views.generic.list import ListView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib import messages
-from django.utils.translation import gettext as _
-from django.contrib.auth.mixins import LoginRequiredMixin
 
-from statuses.models import Status
-from statuses.forms import StatusForm
+from task_manager.statuses.models import Status
+from task_manager.users.mixins import LoginRequiredWithMessageMixin
 
 
-class IndexView(LoginRequiredMixin, View):
-    login_url = "/login/"
-
-    def get(self, request, *args, **kwargs):
-        statuses = Status.objects.all()
-        return render(request, "statuses/index.html",
-                      context={"statuses": statuses})
+class StatusListView(LoginRequiredWithMessageMixin, ListView):
+    model = Status
 
 
-class StatusCreateView(LoginRequiredMixin, View):
-    login_url = "/login/"
+class StatusCreateView(LoginRequiredWithMessageMixin,
+                       SuccessMessageMixin, CreateView):
+    model = Status
+    fields = ["name"]
+    success_url = reverse_lazy("statuses")
+    success_message = _("Status created")
 
-    def get(self, request, *args, **kwargs):
-        form = StatusForm()
-        return render(request, "statuses/create.html",
-                      {"form": form})
+    template_name = "form.html"
 
-    def post(self, request, *args, **kwargs):
-        form = StatusForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.info(request, _("Статус успешно создан"))
-            return redirect(reverse("statuses"))
-        return render(request, "statuses/create.html",
-                      {"form": form})
+    extra_context = {
+        "page_header": _("Create status"),
+        "button_text": _("Create"),
+    }
 
 
-class StatusUpdateView(LoginRequiredMixin, View):
+class StatusUpdateView(LoginRequiredWithMessageMixin,
+                       SuccessMessageMixin, UpdateView):
+    model = Status
+    fields = ["name"]
+    success_url = reverse_lazy("statuses")
+    success_message = _("Status updated")
 
-    def get(self, request, id, *args, **kwargs):
-        status = Status.objects.get(id=id)
-        form = StatusForm(instance=status)
-        return render(request, "statuses/update.html",
-                      context={"form": form, "status_id": id})
+    template_name = "form.html"
 
-    def post(self, request, id, *args, **kwargs):
-        status = Status.objects.get(id=id)
-        form = StatusForm(request.POST, instance=status)
-        if form.is_valid():
-            form.save()
-            messages.info(request, _("Статус успешно изменен"))
-            return redirect(reverse("statuses"))
-        return render(request, "statuses/update.html",
-                      {"form": form, "status_id": id})
+    extra_context = {
+        "page_header": _("Edit status"),
+        "button_text": _("Edit"),
+    }
 
 
-class StatusDeleteView(LoginRequiredMixin, View):
-    def get(self, request, id, *args, **kwargs):
-        status = Status.objects.get(id=id)
-        return render(request, "statuses/delete.html",
-                      context={"status_id": id, "status": status})
+class StatusDeleteView(LoginRequiredWithMessageMixin,
+                       SuccessMessageMixin, DeleteView):
+    model = Status
+    success_url = reverse_lazy("statuses")
+    success_message = _("Status deleted")
 
-    def post(self, request, id, *args, **kwargs):
-        status = Status.objects.get(id=id)
-        if status:
-            status.delete()
-        messages.info(request, _("Статус успешно удален"))
-        return redirect(reverse("statuses"))
+    def post(self, request, pk, *args, **kwargs):
+        status = get_object_or_404(Status, id=pk)
+        if status.task_set.exists():
+            messages.error(request, _("Unable to delete status"))
+            return redirect(reverse_lazy("statuses"))
+        data = super().post(request, pk, *args, **kwargs)
+        return data

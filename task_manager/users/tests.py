@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 
-from users.models import User
+from task_manager.users.models import User
 
 
 class UsersTest(TestCase):
@@ -76,7 +76,7 @@ class UsersTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Unable to delete user", response.content)
         self.client.logout()
-    
+
         # create new unbounded user
         user = User.objects.create_user(username="test_user_delete",
                                         password="test_password_delete")
