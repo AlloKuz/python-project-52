@@ -1,0 +1,18 @@
+{% extends "layout/base.html" %}
+
+{% load i18n %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+
+<h1>{% translate "Редактировать пользователя" %}</h1>
+
+<form action="{% url 'users_update' id=user_id %}" method="post">
+    {% bootstrap_form form %}
+    {% csrf_token %}
+
+    {% translate "Сохранить" as button_save %}
+    {% bootstrap_button button_save button_type="submit" button_class="btn-primary" %}
+</form>
+
+{% endblock %}
