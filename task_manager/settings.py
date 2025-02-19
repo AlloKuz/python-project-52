@@ -56,10 +56,19 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_bootstrap5',
     'django_extensions',
+    'crispy_forms',
+    'crispy_bootstrap5',
     'task_manager',
     'users',
     'statuses',
+    'tasks',
+    'labels',
 ]
+
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -71,6 +80,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'rollbar.contrib.django.middleware.RollbarNotifierMiddleware',
 ]
 
 ROOT_URLCONF = 'task_manager.urls'
@@ -151,6 +161,8 @@ LANGUAGES = (
 
 LOCALE_PATHS = [BASE_DIR / "locale"]
 
+LOGIN_URL = '/login/'
+
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
@@ -167,3 +179,10 @@ STATIC_ROOT = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+ROLLBAR = {
+    'access_token': os.getenv("ROLLBAR_TOKEN"),
+    'environment': 'development' if DEBUG else 'production',
+    'code_version': '1.0',
+    'root': BASE_DIR,
+}
