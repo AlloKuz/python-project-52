@@ -1,4 +1,4 @@
-from django.shortcuts import reverse, redirect, get_object_or_404
+from django.shortcuts import reverse, redirect
 from django.urls import reverse_lazy
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -57,8 +57,8 @@ class LabelDeleteView(LoginRequiredWithMessageMixin,
         "deletion_msg": _("Are you sure you want to delete label")
     }
 
-    def post(self, request, pk, *args, **kwargs):
-        label = get_object_or_404(Label, pk=pk)
+    def post(self, request, *args, **kwargs):
+        label = self.get_object()
         if label.task_set.exists():
             messages.error(request, _("Unable to delete label"))
             return redirect(reverse("labels"))

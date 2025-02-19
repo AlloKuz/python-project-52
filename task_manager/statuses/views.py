@@ -1,5 +1,5 @@
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.list import ListView
@@ -57,10 +57,10 @@ class StatusDeleteView(LoginRequiredWithMessageMixin,
         "deletion_msg": _("Are you sure you want to delete status")
     }
 
-    def post(self, request, pk, *args, **kwargs):
-        status = get_object_or_404(Status, id=pk)
+    def post(self, request, *args, **kwargs):
+        status = self.get_object()
         if status.task_set.exists():
             messages.error(request, _("Unable to delete status"))
             return redirect(reverse_lazy("statuses"))
-        data = super().post(request, pk, *args, **kwargs)
+        data = super().post(request, *args, **kwargs)
         return data

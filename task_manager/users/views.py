@@ -68,9 +68,9 @@ class UserDeleteView(LoginRequiredWithMessageMixin,
         "deletion_msg": _("Are you sure you want to delete user")
     }
 
-    def post(self, request, pk, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         try:
-            data = super().post(request, pk, *args, **kwargs)
+            data = super().post(request, *args, **kwargs)
         except ProtectedError:
             messages.error(request, _("Unable to delete user"))
             return redirect(reverse("users"))
