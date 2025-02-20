@@ -38,6 +38,7 @@ if DEBUG:
 
 ALLOWED_HOSTS = [
     'python-project-52-lmoi.onrender.com',
+    'webserver',
     '127.0.0.1',
 ]
 
