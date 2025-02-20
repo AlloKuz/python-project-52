@@ -39,6 +39,7 @@ if DEBUG:
 
 ALLOWED_HOSTS = [
     'python-project-52-lmoi.onrender.com',
+    '127.0.0.1',
 ]
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')

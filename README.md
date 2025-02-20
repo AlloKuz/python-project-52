@@ -28,3 +28,8 @@ pip install poetry
 Для запуска отладочной версии используйте `make dev`.
 
 ## Пример работы:
+![Screenshot 1](.github/images/users.jpg)
+
+![Screenshot 1](.github/images/tasks.jpg)
+
+![Screenshot 1](.github/images/create.jpg)
