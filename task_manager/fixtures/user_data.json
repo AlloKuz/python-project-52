@@ -1,0 +1,23 @@
+{
+    "user": {"username": "test_user", "password": "test_password"},
+    "status": {"name":  "test_status"},
+    "label": {"name":  "test_label"},
+    "task": {"name":  "test_task"},
+
+    "new_user": {
+        "username": "new_test_user",
+        "first_name": "new_first_name",
+        "password1": "new_test_password",
+        "password2": "new_test_password"
+    },
+    "new_user_login": {
+        "username": "new_test_user",
+        "password": "new_test_password"
+    },
+    "user_updated": {
+        "first_name": "updated_test_user",
+        "username": "test_user",
+        "password1": "test_password",
+        "password2": "test_password"
+    }
+}
