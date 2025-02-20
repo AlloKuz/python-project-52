@@ -13,12 +13,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import logging
 import os
 import uuid
+from pathlib import Path
 
 import dj_database_url
-from dotenv import load_dotenv
 from django.utils.translation import gettext_lazy as _
-
-from pathlib import Path
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 

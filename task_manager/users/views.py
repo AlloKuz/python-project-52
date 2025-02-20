@@ -1,15 +1,17 @@
-from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import reverse, redirect
 from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models.deletion import ProtectedError
+from django.shortcuts import redirect, reverse
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.db.models.deletion import ProtectedError
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
-from task_manager.users.models import User
 from task_manager.users.forms import UserForm, UserUpdateForm
-from task_manager.users.mixins import (UserOnlyEditThemselfPermissionMixin,
-                                       LoginRequiredWithMessageMixin)
+from task_manager.users.mixins import (
+    LoginRequiredWithMessageMixin,
+    UserOnlyEditThemselfPermissionMixin,
+)
+from task_manager.users.models import User
 
 
 class UserListView(ListView):

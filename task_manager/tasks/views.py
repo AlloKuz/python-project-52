@@ -1,19 +1,21 @@
+import logging
+
+from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.contrib import messages
-from django.views.generic import (ListView,
-                                  CreateView,
-                                  DetailView,
-                                  UpdateView,
-                                  DeleteView)
-import logging
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
 
-from task_manager.tasks.models import Task
 from task_manager.tasks.filters import TasksFilter
+from task_manager.tasks.models import Task
 from task_manager.users.mixins import LoginRequiredWithMessageMixin
-
 
 logger = logging.getLogger(__name__)
 

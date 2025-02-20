@@ -1,8 +1,8 @@
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
-from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.messages.views import SuccessMessageMixin
+from django.utils.translation import gettext_lazy as _
 
 
 class LoginUserView(SuccessMessageMixin, LoginView):

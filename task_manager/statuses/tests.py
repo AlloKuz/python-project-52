@@ -1,10 +1,11 @@
-from django.test import TestCase, Client
-from django.urls import reverse
-from django.http import HttpResponse
 import logging
 
-from task_manager.statuses.models import Status
+from django.http import HttpResponse
+from django.test import Client, TestCase
+from django.urls import reverse
+
 from task_manager.fixtures.load_fixture import load
+from task_manager.statuses.models import Status
 
 logger = logging.getLogger(__name__)
 

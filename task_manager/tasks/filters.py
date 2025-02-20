@@ -1,10 +1,9 @@
 import django_filters
-
 from django.forms.widgets import CheckboxInput
 from django.utils.translation import gettext_lazy as _
 
-from task_manager.tasks.models import Task
 from task_manager.labels.models import Label
+from task_manager.tasks.models import Task
 
 
 class TasksFilter(django_filters.FilterSet):

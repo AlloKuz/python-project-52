@@ -1,10 +1,10 @@
-from django.shortcuts import reverse, redirect
-from django.urls import reverse_lazy
-from django.views.generic.list import ListView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib import messages
-from django.utils.translation import gettext_lazy as _
 from django.contrib.messages.views import SuccessMessageMixin
+from django.shortcuts import redirect, reverse
+from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.list import ListView
 
 from task_manager.labels.models import Label
 from task_manager.users.mixins import LoginRequiredWithMessageMixin
