@@ -37,4 +37,4 @@ https://python-project-52-lmoi.onrender.com
 
 ![Screenshot 1](.github/images/create.jpg)
 
-![Screenshot 1](.github/images/tasks2.jpg.jpg)
+![Screenshot 1](.github/images/tasks2.jpg)
