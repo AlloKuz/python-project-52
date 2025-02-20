@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "python-project-52"
+name = "hexlet-code"
 version = "0.1.0"
 description = "Task manager"
 authors = ["AlloKuz <a.o.kuzmin.rus@gmail.com>"]
