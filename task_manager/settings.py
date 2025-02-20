@@ -38,7 +38,7 @@ if DEBUG:
     logger.info("You started in debug mode")
 
 ALLOWED_HOSTS = [
-    'webserver',
+    'python-project-52-lmoi.onrender.com',
 ]
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
