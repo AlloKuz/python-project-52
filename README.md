@@ -14,7 +14,7 @@
 
 ## Установка и запуск
 
-Для запуска приложение необходимо настроить параметры приложения в файл `.env`, либо в переменные окружения (необходимые переменные указаны в `.env.example`).
+Для запуска приложение необходимо настроить параметры приложения в файл `.env`, либо в переменные окружения.
 
 Установка приложения начинается с установки `poetry` и запуска скрипта `build.sh`:
 
@@ -28,8 +28,13 @@ pip install poetry
 Для запуска отладочной версии используйте `make dev`.
 
 ## Пример работы:
+
+https://python-project-52-lmoi.onrender.com
+
 ![Screenshot 1](.github/images/users.jpg)
 
 ![Screenshot 1](.github/images/tasks.jpg)
 
 ![Screenshot 1](.github/images/create.jpg)
+
+![Screenshot 1](.github/images/tasks2.jpg.jpg)
