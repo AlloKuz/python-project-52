@@ -13,9 +13,7 @@ class UserOnlyEditThemselfPermissionMixin(AccessMixin):
         return reverse('users')
 
     def dispatch(self, request, pk, *args, **kwargs):
-        if not request.user.is_authenticated:
-            messages.error(request, self.no_auth_message)
-        elif request.user.id != pk:
+        if request.user.id != pk:
             messages.error(request, self.fail_message)
         else:
             return super().dispatch(request, pk, *args, **kwargs)
