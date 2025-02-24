@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import reverse
 from django.test import Client, TestCase
 
-from task_manager.fixtures.load_fixture import load
+from task_manager.load_fixture import load
 from task_manager.labels.models import Label
 from task_manager.tasks.models import Task
 from task_manager.users.models import User
