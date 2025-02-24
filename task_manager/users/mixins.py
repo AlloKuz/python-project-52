@@ -10,7 +10,7 @@ class UserOnlyEditThemselfPermissionMixin(AccessMixin):
     no_auth_message = ""
 
     def get_fail_url(self):
-        return reverse('users') 
+        return reverse('users')
 
     def dispatch(self, request, pk, *args, **kwargs):
         if not request.user.is_authenticated:
