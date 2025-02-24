@@ -164,7 +164,9 @@ LANGUAGES = (
     ("en", _("English")),
 )
 
-LOCALE_PATHS = [BASE_DIR / "locale"]
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'task_manager', 'locale'),
+]
 
 LOGIN_URL = '/login/'
 
