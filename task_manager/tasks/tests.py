@@ -34,7 +34,7 @@ class TasksTest(TestCase):
         for url in urls:
             response = self.client.get(url, follow=True)
             self.assertIn(b"First you need to log in", response.content)
-            self.assertRedirects(response, f"{reverse('login')}?next={url}")
+            self.assertRedirects(response, reverse("login") + "?next=" + url)
 
     def test_TasksView(self):
         response = self.client.get(reverse("tasks"))
