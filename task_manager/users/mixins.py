@@ -1,13 +1,16 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 
 class UserOnlyEditThemselfPermissionMixin(AccessMixin):
-    fail_url = "/"
     fail_message = ""
     no_auth_message = ""
+
+    def get_fail_url(self):
+        return reverse('users') 
 
     def dispatch(self, request, pk, *args, **kwargs):
         if not request.user.is_authenticated:
