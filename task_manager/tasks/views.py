@@ -9,9 +9,9 @@ from django.views.generic import (
     CreateView,
     DeleteView,
     DetailView,
-    ListView,
     UpdateView,
 )
+from django_filters.views import FilterView
 
 from task_manager.tasks.filters import TasksFilter
 from task_manager.tasks.models import Task
@@ -20,15 +20,19 @@ from task_manager.users.mixins import LoginRequiredWithMessageMixin
 logger = logging.getLogger(__name__)
 
 
-class TaskListView(LoginRequiredWithMessageMixin, ListView):
+class TaskListView(LoginRequiredWithMessageMixin, FilterView):
     model = Task
+    context_object_name = 'tasks'
+    template_name = 'tasks/task_list.html'
+    filterset_class = TasksFilter
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["filters"] = TasksFilter(self.request.GET,
-                                         queryset=Task.objects.all(),
-                                         request=self.request)
-        return context
+    def get_filterset_kwargs(self, filterset_class):
+        kwargs = super().get_filterset_kwargs(filterset_class)
+        kwargs['request'] = self.request
+        return kwargs
+
+    def get_queryset(self):
+        return Task.objects.filter(author=self.request.user)
 
 
 class TaskCreateView(LoginRequiredWithMessageMixin,
@@ -84,16 +88,17 @@ class TaskDeleteView(LoginRequiredWithMessageMixin,
         "deletion_msg": _("Are you sure you want to delete task")
     }
 
-    def get(self, request, *args, **kwargs):
-        data = super().get(request, *args, **kwargs)
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
         if self.object.author_id != request.user.id:
             messages.error(request, _("Task can be deleted only by author"))
             return redirect(reverse_lazy('tasks'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        data = super().get(request, *args, **kwargs)
         return data
 
     def post(self, request, *args, **kwargs):
         data = super().post(request, *args, **kwargs)
-        if self.object.author_id != request.user.id:
-            messages.error(request, _("Task can be deleted only by author"))
-            return redirect(reverse_lazy('tasks'))
         return data
