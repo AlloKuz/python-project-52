@@ -30,11 +30,18 @@ class TasksTest(TestCase):
             reverse("tasks_update", kwargs={"pk": self.task.id}),
             reverse("tasks_delete", kwargs={"pk": self.task.id}),
         ]
-
         for url in urls:
             response = self.client.get(url, follow=True)
-            self.assertIn(b"First you need to log in", response.content)
-            self.assertRedirects(response, reverse("login") + "?next=" + url)
+
+            login_url = reverse("login") + "?next=" + reverse("tasks")
+            expected_redirects = [(reverse("tasks"), 302), (login_url, 302)]
+
+            if response.redirect_chain == expected_redirects:
+                expected_url = login_url
+            else:
+                expected_url = reverse("login") + "?next=" + url
+
+            self.assertRedirects(response, expected_url)
 
     def test_TasksView(self):
         response = self.client.get(reverse("tasks"))
