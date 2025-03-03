@@ -34,6 +34,13 @@ class TaskListView(LoginRequiredWithMessageMixin, FilterView):
     def get_queryset(self):
         return Task.objects.filter(author=self.request.user)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        filterset = getattr(self, 'filterset', None)
+        if filterset:
+            context['filter'] = filterset
+        return context
+
 
 class TaskCreateView(LoginRequiredWithMessageMixin,
                      SuccessMessageMixin, CreateView):

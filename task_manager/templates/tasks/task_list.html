@@ -12,7 +12,7 @@
 
     <form method="get" class="form-inline center">
         {% csrf_token %}
-        {{ filters.form|crispy }}
+        {{ filter.form|crispy }}
         <input class="btn btn-primary" type="submit" value="{% translate 'Show' %}"/>
     </form>
 
