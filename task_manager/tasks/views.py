@@ -95,15 +95,11 @@ class TaskDeleteView(LoginRequiredWithMessageMixin,
         "deletion_msg": _("Are you sure you want to delete task")
     }
 
-    def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
+    def get(self, request, *args, **kwargs):
+        data = super().get(request, *args, **kwargs)
         if self.object.author_id != request.user.id:
             messages.error(request, _("Task can be deleted only by author"))
             return redirect(reverse_lazy('tasks'))
-        return super().dispatch(request, *args, **kwargs)
-
-    def get(self, request, *args, **kwargs):
-        data = super().get(request, *args, **kwargs)
         return data
 
     def post(self, request, *args, **kwargs):
