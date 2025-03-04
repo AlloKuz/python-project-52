@@ -31,16 +31,6 @@ class TaskListView(LoginRequiredWithMessageMixin, FilterView):
         kwargs['request'] = self.request
         return kwargs
 
-    def get_queryset(self):
-        return Task.objects.filter(author=self.request.user)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        filterset = getattr(self, 'filterset', None)
-        if filterset:
-            context['filter'] = filterset
-        return context
-
 
 class TaskCreateView(LoginRequiredWithMessageMixin,
                      SuccessMessageMixin, CreateView):
@@ -95,11 +85,15 @@ class TaskDeleteView(LoginRequiredWithMessageMixin,
         "deletion_msg": _("Are you sure you want to delete task")
     }
 
-    def get(self, request, *args, **kwargs):
-        data = super().get(request, *args, **kwargs)
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
         if self.object.author_id != request.user.id:
             messages.error(request, _("Task can be deleted only by author"))
             return redirect(reverse_lazy('tasks'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        data = super().get(request, *args, **kwargs)
         return data
 
     def post(self, request, *args, **kwargs):
