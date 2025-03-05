@@ -1,5 +1,3 @@
-import logging
-
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
@@ -16,8 +14,6 @@ from django_filters.views import FilterView
 from task_manager.tasks.filters import TasksFilter
 from task_manager.tasks.models import Task
 from task_manager.users.mixins import LoginRequiredWithMessageMixin
-
-logger = logging.getLogger(__name__)
 
 
 class TaskListView(LoginRequiredWithMessageMixin, FilterView):
