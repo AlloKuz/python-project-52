@@ -92,10 +92,6 @@ class TaskDeleteView(LoginRequiredWithMessageMixin,
             return redirect(reverse_lazy('tasks'))
         return super().dispatch(request, *args, **kwargs)
 
-    def get(self, request, *args, **kwargs):
-        data = super().get(request, *args, **kwargs)
-        return data
-
     def post(self, request, *args, **kwargs):
         data = super().post(request, *args, **kwargs)
         if self.object.author_id != request.user.id:
