@@ -19,7 +19,7 @@ class TasksFilter(django_filters.FilterSet):
         fields = ["status", "executor", "labels"]
 
     def is_author(self, queryset, name, value):
-        author = getattr(self.request, 'user', None)
-        if value and author is not None:
+        author = self.request.user
+        if value:
             return queryset.filter(author=author)
         return queryset
