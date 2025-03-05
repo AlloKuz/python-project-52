@@ -22,11 +22,6 @@ class TaskListView(LoginRequiredWithMessageMixin, FilterView):
     template_name = 'tasks/task_list.html'
     filterset_class = TasksFilter
 
-    def get_filterset_kwargs(self, filterset_class):
-        kwargs = super().get_filterset_kwargs(filterset_class)
-        kwargs['request'] = self.request
-        return kwargs
-
 
 class TaskCreateView(LoginRequiredWithMessageMixin,
                      SuccessMessageMixin, CreateView):
